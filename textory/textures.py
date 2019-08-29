@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import functools
+import dask.array as da
 from scipy.ndimage.filters import convolve
 
 
