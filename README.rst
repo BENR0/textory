@@ -4,12 +4,14 @@ With Textory local (windowed) textures can be calculated for images (array like 
 It has conveniant wrappers to be used with xarray or Satpy scenes.
 
 Currently implemented are:
+
 - variogram
 - pseudo-variogram
 
 Todo
 ----
 Implement:
+
 - Rodogram
 - Madogram
 - Crossvariogram
