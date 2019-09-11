@@ -334,6 +334,31 @@ def _vario_difference(x, y=None, lag=1, window=5):
     
     return res
 
+def scalar_vario(vario_diff, n_neighbours):
+    """Calulates sum and "mean" for vario difference array to get scalar variogram value
+
+    Parameters
+    ----------
+    vario_diff : dask.array
+        Array with difference of neighbours at lag x to center pixel.
+    n_neighbours : int
+        Number of neighbours at lag x. See ::ref num_neighbours
+
+    Returns
+    -------
+    float
+        (Pseudo-) Variogram value
+    """
+    vario = np.sum(vario_diff)
+    
+    cols, rows = vario_diff.shape
+    vario_num_pix = cols * rows
+    
+    vario_factor = 1.0/(2 * vario_num_pix * n_neighbours)
+
+    vario = vario * vario_factor
+
+    return vario
 
 def variogram_texture(x, lag=1, window=5):
     """
@@ -369,7 +394,10 @@ def variogram_texture(x, lag=1, window=5):
     
     factor = 1.0/(2 * num_pix * neighbours)
     
-    return factor * res
+    #calulate vario for whole array
+    vario = scalar_vario(diff, neighbours)
+
+    return vario, factor * res
 
 def variogram(x, lag=1, window=5):
     """
@@ -391,17 +419,12 @@ def variogram(x, lag=1, window=5):
     """
     diff = _vario_difference(x, lag=lag, window=window)
     
-    res = np.sum(diff)
-    
     #calculate 1/2N part of variogram
     neighbours = num_neighbours(lag)
+
+    res = scalar_vario(diff, neighbours)
     
-    cols, rows = x.shape
-    num_pix = cols * rows
-    
-    factor = 1.0/(2 * num_pix * neighbours)
-    
-    return factor * res
+    return res
 
 
 def pseudo_variogram_texture(x, y, lag=1, window=5):
@@ -438,8 +461,11 @@ def pseudo_variogram_texture(x, y, lag=1, window=5):
     num_pix = window**2
     
     factor = 1.0/(2 * num_pix * neighbours)
-    
-    return factor*res
+
+    #calculate vario for whole array
+    vario = scalar_vario(diff, neighbours)
+
+    return vario, factor*res
 
 
 def pseudo_variogram(x, y, lag=1, window=5):
@@ -463,14 +489,9 @@ def pseudo_variogram(x, y, lag=1, window=5):
     """
     diff = _vario_difference(x, y, lag, window)
     
-    res = np.sum(diff)
-    
     #calculate 1/2N part of variogram
     neighbours = num_neighbours(lag)
     
-    cols, rows = x.shape
-    num_pix = cols * rows
+    res = scalar_vario(diff, neighbours)
     
-    factor = 1.0/(2 * num_pix * neighbours)
-    
-    return factor*res
+    return res
