@@ -297,7 +297,7 @@ def global_vario(x, lag=1):
     
     return factor * res
 
-def _vario_difference(x, y=None, lag=1, window=5):
+def _vario_difference(x, y=None, lag=1):
     """
     Calculate windowed variogram with specified lag for array.
     
@@ -307,7 +307,6 @@ def _vario_difference(x, y=None, lag=1, window=5):
     y : np.array, optional
         Defaults to None
     lag : int, optional
-    window : int, optional
     
     Returns
     -------
@@ -354,7 +353,7 @@ def variogram_texture(x, lag=1, window=5):
     array like
         Array where each element is the variogram of the window around the element
     """
-    diff = _vario_difference(x, lag=lag, window=window)
+    diff = _vario_difference(x, lag=lag)
     
     #create convolve function with reduced parameters for mapping
     pcon = functools.partial(con, n=window)
@@ -371,7 +370,7 @@ def variogram_texture(x, lag=1, window=5):
     
     return factor * res
 
-def variogram(x, lag=1, window=5):
+def variogram(x, lag=1):
     """
     Calculate variogram with specified lag for array.
     
@@ -381,15 +380,13 @@ def variogram(x, lag=1, window=5):
         Input array
     lag : int
         Lag distance for variogram, defaults to 1.
-    window : int, optional
-        Length of one side of window. Window will be of size window*window.
     
     Returns
     -------
     float
         Variogram
     """
-    diff = _vario_difference(x, lag=lag, window=window)
+    diff = _vario_difference(x, lag=lag)
     
     res = np.sum(diff)
     
@@ -442,7 +439,7 @@ def pseudo_variogram_texture(x, y, lag=1, window=5):
     return factor*res
 
 
-def pseudo_variogram(x, y, lag=1, window=5):
+def pseudo_variogram(x, y, lag=1):
     """
     Calculate pseudo-variogram with specified lag for 
     the two arrays.
@@ -453,15 +450,13 @@ def pseudo_variogram(x, y, lag=1, window=5):
         Input array
     lag : int
         Lag distance for variogram, defaults to 1.
-    window : int, optional
-        Length of one side of window. Window will be of size window*window.
     
     Returns
     -------
     float
         Pseudo-variogram between the two arrays
     """
-    diff = _vario_difference(x, y, lag, window)
+    diff = _vario_difference(x, y, lag)
     
     res = np.sum(diff)
     
