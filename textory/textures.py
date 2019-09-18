@@ -5,8 +5,7 @@ import functools
 import dask.array as da
 from scipy.ndimage.filters import convolve
 
-
-def variogram(band1, band2, lag=None, window=None):
+def variogram_diff_old(band1, band2, lag=None, window=None):
     band2 = np.pad(band2, ((1,1),(1,1)), mode="edge")
     
     out = np.zeros(band1.shape, dtype=band1.dtype.name)
@@ -26,6 +25,32 @@ def variogram(band1, band2, lag=None, window=None):
     
     return out
 
+def variogram_diff_loop(band1, band2, lag=1, window=None):
+    band2 = np.pad(band2, ((lag,lag),(lag,lag)), mode="edge")
+    
+    out = np.zeros(band1.shape, dtype=band1.dtype.name)
+
+    win = 2*lag + 1
+    radius = int(win/2)
+    rows, cols = arr1.shape
+    
+    arr1 = np.asarray(arr1)
+    
+    r = list(range(win))
+    for x in r:
+        x_off = x - radius
+
+        if x == min(r) or x == max(r):
+            y_r = r
+        else:
+            y_r = [max(r), min(r)]
+        
+        for y in y_r:
+            y_off = y - radius
+
+            out += (band1 - band2[y_off:-y_off, x_off:-x_off])**2
+    
+    return out
 
 def view(offset_y, offset_x, size_y, size_x, step=1):
     """
