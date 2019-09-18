@@ -366,9 +366,9 @@ def variogram_texture(x, lag=1, window=5):
     
     num_pix = window**2
     
-    factor = 1.0/(2 * num_pix * neighbours)
+    factor = 2 * num_pix * neighbours
     
-    return factor * res
+    return res / factor
 
 def variogram(x, lag=1):
     """
@@ -396,9 +396,9 @@ def variogram(x, lag=1):
     cols, rows = x.shape
     num_pix = cols * rows
     
-    factor = 1.0/(2 * num_pix * neighbours)
+    factor = 2 * num_pix * neighbours
     
-    return factor * res
+    return res / factor
 
 
 def pseudo_variogram_texture(x, y, lag=1, window=5):
@@ -434,9 +434,9 @@ def pseudo_variogram_texture(x, y, lag=1, window=5):
     
     num_pix = window**2
     
-    factor = 1.0/(2 * num_pix * neighbours)
+    factor = 2 * num_pix * neighbours
     
-    return factor*res
+    return res / factor
 
 
 def pseudo_variogram(x, y, lag=1):
@@ -466,6 +466,6 @@ def pseudo_variogram(x, y, lag=1):
     cols, rows = x.shape
     num_pix = cols * rows
     
-    factor = 1.0/(2 * num_pix * neighbours)
+    factor = 2 * num_pix * neighbours
     
-    return factor*res
+    return res / factor
