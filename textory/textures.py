@@ -32,9 +32,7 @@ def variogram_diff_loop(band1, band2, lag=1, window=None):
 
     win = 2*lag + 1
     radius = int(win/2)
-    rows, cols = arr1.shape
     
-    arr1 = np.asarray(arr1)
     
     r = list(range(win))
     for x in r:
