@@ -388,7 +388,7 @@ def variogram(x, lag=1):
     """
     diff = dask_neighbour_diff_squared(x, lag=lag)
     
-    res = np.sum(diff)
+    res = np.nansum(diff)
     
     #calculate 1/2N part of variogram
     neighbours = num_neighbours(lag)
@@ -458,7 +458,7 @@ def pseudo_variogram(x, y, lag=1):
     """
     diff = dask_neighbour_diff_squared(x, y, lag)
     
-    res = np.sum(diff)
+    res = np.nansum(diff)
     
     #calculate 1/2N part of variogram
     neighbours = num_neighbours(lag)
