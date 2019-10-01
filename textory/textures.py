@@ -124,9 +124,10 @@ def view(offset_y, offset_x, size_y, size_x, step=1):
     return np.s_[y_in, x_in], np.s_[y_out, x_out]
 
 
-def vario(arr1, arr2=None, lag=1):
+def neighbour_diff_squared(arr1, arr2=None, lag=1):
     """
-    Calculates the (pseudo-) variogram between two arrays.
+    Calculates the squared difference between a pixel and its neighbours
+    at the specified lag.
     
     If only one array is supplied variogram is calculated
     for itself (same array is used as the second array).
@@ -145,34 +146,34 @@ def vario(arr1, arr2=None, lag=1):
     
     """
     win = 2*lag + 1
-    radius = int(win/2)
+    radius = win // 2
     rows, cols = arr1.shape
     
-    arr1 = np.asarray(arr1)
+    #arr1 = np.asarray(arr1)
     
     if arr2 is None:
         arr2 = arr1.copy()
     
-    out_arr = np.zeros(arr1.shape, dtype=arr1.dtype.name)
+    out_arr = np.zeros_like(arr1)
 
     r = list(range(win))
-    for x in r:
-        x_off = x - radius
+    for y in r:
+        y_off = y - radius
 
-        if x == min(r) or x == max(r):
-            y_r = r
+        if y == min(r) or y == max(r):
+            x_r = r
         else:
-            y_r = [max(r), min(r)]
+            x_r = [max(r), min(r)]
         
-        for y in y_r:
-            y_off = y - radius
-            
+        for x in x_r:
+            x_off = x - radius
+            print(y_off, x_off) 
             view_in, view_out = view(y_off, x_off, rows, cols)
             out_arr[view_out] += (arr1[view_out] - arr2[view_in])**2
             
     return out_arr
 
-def vario1(arr1, arr2=None, lag=1):
+def neighbour_diff_squared1(arr1, arr2=None, lag=1):
     """
     Calculates the (pseudo-) variogram between two arrays.
     
@@ -291,38 +292,10 @@ def con(x, n=5):
     
     return convolve(x, k)
 
-
-def global_vario(x, lag=1):
+def dask_neighbour_diff_squared(x, y=None, lag=1):
     """
-    Calculate variogram with specified lag for array.
-    
-    Parameters
-    ----------
-    x : np.array
-    lag : int, optional
-    
-    Returns
-    -------
-    variogram : float
-    """
-    #new = ddata.map_overlap(pvario, depth = 1)
-    v = vario(x, lag=lag)
-    
-    res = np.sum(v)
-    
-    #calculate 1/2N part of variogram
-    neighbours = num_neighbours(lag)
-    
-    cols, rows = x.shape
-    num_pix = cols * rows
-    
-    factor = 1.0/(2 * num_pix * neighbours)
-    
-    return factor * res
-
-def _vario_difference(x, y=None, lag=1):
-    """
-    Calculate windowed variogram with specified lag for array.
+    Calculate quared difference between pixel and its
+    neighbours at specified lag for dask arrays
     
     Parameters
     ----------
@@ -339,7 +312,7 @@ def _vario_difference(x, y=None, lag=1):
     #v = vario1(x, lag=lag)
     
     #pvario = functools.partial(vario1, arr2=None, lag=lag)
-    pvario = functools.partial(vario1, lag=lag)
+    pvario = functools.partial(neighbour_diff_squared, lag=lag)
     
     #olap = da.overlap.overlap(x, depth={0: 0, 1: lag, 2: lag}, boundary={1: "reflect", 2: "reflect"})
     #v = olap[0,:,:]
@@ -376,7 +349,7 @@ def variogram_texture(x, lag=1, window=5):
     array like
         Array where each element is the variogram of the window around the element
     """
-    diff = _vario_difference(x, lag=lag)
+    diff = dask_neighbour_diff_squared(x, lag=lag)
     
     #create convolve function with reduced parameters for mapping
     pcon = functools.partial(con, n=window)
@@ -409,7 +382,7 @@ def variogram(x, lag=1):
     float
         Variogram
     """
-    diff = _vario_difference(x, lag=lag)
+    diff = dask_neighbour_diff_squared(x, lag=lag)
     
     res = np.sum(diff)
     
@@ -444,7 +417,7 @@ def pseudo_variogram_texture(x, y, lag=1, window=5):
         Array where each element is the pseudo-variogram
         between the two arrays of the window around the element.
     """
-    diff = _vario_difference(x, y, lag, window)
+    diff = dask_neighbour_diff_squared(x, y, lag)
     
     #create convolve function with reduced parameters for mapping
     pcon = functools.partial(con, n=window)
@@ -479,7 +452,7 @@ def pseudo_variogram(x, y, lag=1):
     float
         Pseudo-variogram between the two arrays
     """
-    diff = _vario_difference(x, y, lag)
+    diff = dask_neighbour_diff_squared(x, y, lag)
     
     res = np.sum(diff)
     
