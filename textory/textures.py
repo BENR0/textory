@@ -167,7 +167,6 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1):
         
         for x in x_r:
             x_off = x - radius
-            print(y_off, x_off) 
             view_in, view_out = view(y_off, x_off, rows, cols)
             out_arr[view_out] += (arr1[view_out] - arr2[view_in])**2
             
@@ -274,7 +273,7 @@ def num_neighbours(lag=1):
     
     return neighbours
 
-def con(x, n=5):
+def con(x, n=5, kernel=None):
     """
     Convolve array x with square kernel of size n.
     
@@ -283,12 +282,17 @@ def con(x, n=5):
     x : np.array
     n : int, optional
         Kernel size, defaults to 5.
+    kernel : np.array, optional
+        Custom kernel to convolve with.
     
     Returns
     -------
     np.array
     """
-    k = np.ones((n,n))
+    if kernel is None:
+        k = np.ones((n,n))
+    else:
+        k = kernel
     
     return convolve(x, k)
 
