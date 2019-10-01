@@ -401,7 +401,7 @@ def variogram(x, lag=1):
     return res / factor
 
 
-def pseudo_variogram_texture(x, y, lag=1, window=5):
+def pseudo_cross_variogram_texture(x, y, lag=1, window=5):
     """
     Calculate moveing window pseudo-variogram with specified
     lag for the two arrays.
@@ -439,7 +439,7 @@ def pseudo_variogram_texture(x, y, lag=1, window=5):
     return res / factor
 
 
-def pseudo_variogram(x, y, lag=1):
+def pseudo_cross_variogram(x, y, lag=1):
     """
     Calculate pseudo-variogram with specified lag for 
     the two arrays.
