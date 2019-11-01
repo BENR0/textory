@@ -3,8 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to textory's documentation!
 ===================================
+Textory's documentation
+===================================
+
+Textory is a python library for the calculation of windowed statistics of arrays.
+It can calculate windowed variograms, pseudo-cross variograms and standard statistics
+like mean, std, min, max, etc. for rectangular and round windows.
+It can also be used conveniantly with xarrays and Satpy scenes.
 
 .. toctree::
    :maxdepth: 2
