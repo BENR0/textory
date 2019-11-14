@@ -4,6 +4,7 @@ import functools
 import numpy as np
 import dask.array as da
 import skimage as ski
+#import bottlenack as bn
 
 def view(offset_y, offset_x, size_y, size_x, step=1):
     """
@@ -312,10 +313,20 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
     np.array
 
     """
+    #if x.shape == (1, 1):
+        #return x
+
+
     measure = getattr(np, stat)
 
     pad = int(win_size//2)
     data = np.pad(x, (pad, pad), mode="constant", constant_values=(np.nan))
+
+    #sh = np.asarray(x).shape
+    #mask = np.zeros_like(x)
+    #mask[pad:sh[0]-pad, pad:sh[1]-pad] = 1
+
+    #data = np.where(mask==1, x, np.nan)
 
     #get windowed view of array
     windowed = ski.util.view_as_windows(data, (win_size, win_size))
