@@ -5,10 +5,15 @@ Usage
 Calculating textures
 ======================
 
-Textory is currently only available from via github but can be installed
-with pip:
 
-.. code-block:: bash
+.. code-block:: python
 
-    $ pip install git+https://github.com/BENR0/textory.git@master#egg=textory
+   import textory as tx
+   import numpy as np
+   import dask.array as da
 
+   n = 50
+   data = np.random.rand(n*n).reshape(n,n)
+   data = da.from_array(data)
+
+   tx.textures.variogram(data, lag=2, win_size=7)
