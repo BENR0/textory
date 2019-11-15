@@ -133,7 +133,25 @@ def create_kernel(n=5, geom="square", kernel=None):
     return k
 
 
-def neighbour_diff_squared(arr1, arr2=None, lag=1):
+def neighbour_diff_variogram(x, y):
+    """
+    Inner most calculation step of variogram
+
+    Parameters
+    ----------
+    x, y : np.array
+
+    Returns
+    -------
+    np.array
+
+    """
+    res =  (x - y)**2
+
+    return res
+
+
+def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
     """
     Calculates the squared difference between a pixel and its neighbours
     at the specified lag.
@@ -147,6 +165,8 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1):
     arr2 : np.array, optional
     lag : int, optional
         The lag distance for the variogram, defaults to 1.
+    func : {nd_variogram, nd_pseudo_cross_variogram, nd_madogram, nd_rodogram, nd_cross_variogram}
+        Calculation method of innermost step of the different variogram methods.
     
     Returns
     -------
@@ -154,6 +174,8 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1):
         Variogram
     
     """
+    method = globals()[func]
+
     win = 2*lag + 1
     radius = win // 2
     rows, cols = arr1.shape
@@ -177,11 +199,127 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1):
         for x in x_r:
             x_off = x - radius
             view_in, view_out = view(y_off, x_off, rows, cols)
-            out_arr[view_out] += (arr1[view_out] - arr2[view_in])**2
+            out_arr[view_out] += method(arr1[view_out], arr2[view_in])
             
     return out_arr
 
 
+def _dask_neighbour_diff_squared(x, y=None, lag=1, func="nd_variogram"):
+    """
+    Calculate quared difference between pixel and its
+    neighbours at specified lag for dask arrays
+    
+    Parameters
+    ----------
+    x : np.array
+    y : np.array, optional
+        Defaults to None
+    lag : int, optional
+    func : {nd_variogram, nd_madogram, nd_rodogram, nd_cross_variogram}
+        Calculation method of innermost step of different variogram methods.
+    
+    Returns
+    -------
+    np.array
+        Difference part of variogram calculations
+    """
+    pvario = functools.partial(neighbour_diff_squared, lag=lag, func=func)
+    
+    if y is None:
+        x = da.overlap.overlap(x, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
+        y = x
+    else:
+        x = da.overlap.overlap(x, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
+        y = da.overlap.overlap(y, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
+    
+    res = da.map_blocks(pvario, x, y)
+    res = da.overlap.trim_internal(res, {0: lag, 1: lag})
+    
+    return res
+
+
+def window_sum(x, lag, win_size, win_geom):
+    """
+    Calculate the window sum for the various textures
+
+    Parameters
+    ----------
+    x : array like
+        Input array
+    lag : int
+        Lag distance for variogram, defaults to 1.
+    win_size : int, optional
+        Length of one side of window. Window will be of size window*window.
+    geom : {"square", "round"}
+        Geometry of the kernel. Defaults to square.
+    
+    Returns
+    -------
+    array like
+        Array where each element is the variogram of the window around the element
+
+    """
+    k = create_kernel(n=win_size, geom=win_geom)
+
+    #create convolve function with reduced parameters for mapping
+    pcon = functools.partial(convolve, weights=k)
+    
+    conv_padding = int(win_size//2)
+    res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding})
+    
+    #calculate 1/2N part of variogram
+    neighbours = num_neighbours(lag)
+    
+    num_pix = np.sum(k)
+    
+    factor = 2 * num_pix * neighbours
+
+    return res / factor
+
+def _win_view_stat(x, win_size=5, stat="nanmean"):
+    """
+    Calculates specified basic statistical measure for a moveing window
+    over an array.
+
+    Parameters
+    ----------
+    x : np.array
+    win_size : int, optional
+        Window size, defaults to 5.
+    stat : {"nanmean", "nanmax", "nanmin", "nanmedian", "nanstd"}
+        Statistical measure to calculate.
+
+    Returns
+    -------
+    np.array
+
+    """
+    #if x.shape == (1, 1):
+        #return x
+
+
+    measure = getattr(np, stat)
+
+    pad = int(win_size//2)
+    data = np.pad(x, (pad, pad), mode="constant", constant_values=(np.nan))
+
+    #sh = np.asarray(x).shape
+    #mask = np.zeros_like(x)
+    #mask[pad:sh[0]-pad, pad:sh[1]-pad] = 1
+
+    #data = np.where(mask==1, x, np.nan)
+
+    #get windowed view of array
+    windowed = ski.util.view_as_windows(data, (win_size, win_size))
+
+    #calculate measure over last to axis
+    res = measure(windowed, axis=(2, 3))
+
+    return res
+
+##########################
+#alternative version test
+##########################
 #def neighbour_diff_squared1(arr1, arr2=None, lag=1):
     #"""
     #Calculates the (pseudo-) variogram between two arrays.
@@ -262,76 +400,3 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1):
         #return arr1
     #else:
         #return out_arr
-
-def _dask_neighbour_diff_squared(x, y=None, lag=1):
-    """
-    Calculate quared difference between pixel and its
-    neighbours at specified lag for dask arrays
-    
-    Parameters
-    ----------
-    x : np.array
-    y : np.array, optional
-        Defaults to None
-    lag : int, optional
-    
-    Returns
-    -------
-    np.array
-        Difference part of variogram calculations
-    """
-    pvario = functools.partial(neighbour_diff_squared, lag=lag)
-    
-    if y is None:
-        x = da.overlap.overlap(x, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
-        y = x
-    else:
-        x = da.overlap.overlap(x, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
-        y = da.overlap.overlap(y, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
-    
-    res = da.map_blocks(pvario, x, y)
-    res = da.overlap.trim_internal(res, {0: lag, 1: lag})
-    
-    return res
-
-
-def _win_view_stat(x, win_size=5, stat="nanmean"):
-    """
-    Calculates specified basic statistical measure for a moveing window
-    over an array.
-
-    Parameters
-    ----------
-    x : np.array
-    win_size : int, optional
-        Window size, defaults to 5.
-    stat : {"nanmean", "nanmax", "nanmin", "nanmedian", "nanstd"}
-        Statistical measure to calculate.
-
-    Returns
-    -------
-    np.array
-
-    """
-    #if x.shape == (1, 1):
-        #return x
-
-
-    measure = getattr(np, stat)
-
-    pad = int(win_size//2)
-    data = np.pad(x, (pad, pad), mode="constant", constant_values=(np.nan))
-
-    #sh = np.asarray(x).shape
-    #mask = np.zeros_like(x)
-    #mask[pad:sh[0]-pad, pad:sh[1]-pad] = 1
-
-    #data = np.where(mask==1, x, np.nan)
-
-    #get windowed view of array
-    windowed = ski.util.view_as_windows(data, (win_size, win_size))
-
-    #calculate measure over last to axis
-    res = measure(windowed, axis=(2, 3))
-
-    return res
