@@ -8,7 +8,7 @@ setuptools.setup(
     description = "Image Textures",
     long_description = "",
     long_description_content_type = "text/markdown",
-    url = "https://github.com/benr0/textury",
+    url = "https://github.com/benr0/textory",
     packages = setuptools.find_packages(),
     #include_package_data  =  True,
     install_requires=["numpy",
