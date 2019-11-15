@@ -64,6 +64,35 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
     return res
 
 
+def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
+    """
+    Calculate moveing window pseudo-variogram with specified
+    lag for the two arrays.
+    
+    Parameters
+    ----------
+    x : array like
+        Input array
+    lag : int
+        Lag distance for variogram, defaults to 1.
+    win_size : int, optional
+        Length of one side of window. Window will be of size window*window.
+    geom : {"square", "round"}
+        Geometry of the kernel. Defaults to square.
+    
+    Returns
+    -------
+    array like
+        Array where each element is the pseudo-variogram
+        between the two arrays of the window around the element.
+    """
+    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_cross_variogram")
+    
+    res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
+    
+    return res
+
+
 def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window madogram with specified
@@ -86,6 +115,34 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Array where each element is the madogram of the window around the element
     """
     diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_madogram")
+    
+    res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
+    
+    return res
+
+
+def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
+    """
+    Calculate moveing window rodogram with specified
+    lag for array.
+    
+    Parameters
+    ----------
+    x : array like
+        Input array
+    lag : int
+        Lag distance for variogram, defaults to 1.
+    win_size : int, optional
+        Length of one side of window. Window will be of size window*window.
+    geom : {"square", "round"}
+        Geometry of the kernel. Defaults to square.
+    
+    Returns
+    -------
+    array like
+        Array where each element is the madogram of the window around the element
+    """
+    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_rodogram")
     
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
