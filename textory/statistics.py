@@ -24,7 +24,7 @@ def variogram(x, lag=1):
     float
         Variogram
     """
-    diff = _dask_neighbour_diff_squared(x, lag=lag)
+    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
     
     res = np.nansum(diff)
     
@@ -33,48 +33,6 @@ def variogram(x, lag=1):
     
     cols, rows = x.shape
     num_pix = cols * rows
-    
-    factor = 2 * num_pix * neighbours
-    
-    return res / factor
-
-
-def pseudo_cross_variogram_texture(x, y, lag=1, win_size=5, win_geom="square", kwargs):
-    """
-    Calculate moveing window pseudo-variogram with specified
-    lag for the two arrays.
-    
-    Parameters
-    ----------
-    x : array like
-        Input array
-    lag : int
-        Lag distance for variogram, defaults to 1.
-    win_size : int, optional
-        Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
-        Geometry of the kernel. Defaults to square.
-    
-    Returns
-    -------
-    array like
-        Array where each element is the pseudo-variogram
-        between the two arrays of the window around the element.
-    """
-    diff = _dask_neighbour_diff_squared(x, y, lag)
-    
-    k = create_kernel(n=win_size, geom=win_geom)
-
-    #create convolve function with reduced parameters for mapping
-    pcon = functools.partial(convolve, weights=k)
-    
-    conv_padding = int(win_size//2)
-    res = diff.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding})
-    
-    #calculate 1/2N part of variogram
-    neighbours = num_neighbours(lag)
-    
-    num_pix = np.sum(k)
     
     factor = 2 * num_pix * neighbours
     
@@ -98,7 +56,7 @@ def pseudo_cross_variogram(x, y, lag=1):
     float
         Pseudo-variogram between the two arrays
     """
-    diff = _dask_neighbour_diff_squared(x, y, lag)
+    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_variogram")
     
     res = np.nansum(diff)
     
