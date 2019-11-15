@@ -261,11 +261,12 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
         for x in x_r:
             x_off = x - radius
             view_in, view_out = view(y_off, x_off, rows, cols)
-            #if func == "nd_cross_variogram":
-                #out_arr[view_out] += method(arr1[view_out], arr2[view_in], arr1[view_in], arr2[view_out])
-            #else:
-                #out_arr[view_out] += method(arr1[view_out], arr2[view_in])
-            out_arr[view_out] += method(arr1[view_out], arr2[view_in])
+            if func == "nd_cross_variogram":
+                out_arr[view_out] += method(arr1[view_out], arr2[view_in], arr1[view_in], arr2[view_out])
+            else:
+                out_arr[view_out] += method(arr1[view_out], arr2[view_in])
+
+            #out_arr[view_out] += method(arr1[view_out], arr2[view_in])
             #a1 = arr1[view_out]
             #a2 = arr2[view_in]
             #out_arr[view_out] += (a1 - a2)**2
