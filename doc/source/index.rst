@@ -12,9 +12,19 @@ It can calculate windowed variograms, pseudo-cross variograms and standard stati
 like mean, std, min, max, etc. for rectangular and round windows.
 It can also be used conveniantly with xarrays and Satpy scenes.
 
+.. _project: http://github.com/benr0/textory
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   install
+   usage
+
+.. toctree::
+   :maxdepth: 1
+
+    Textory API <api/textory>
 
 
 
