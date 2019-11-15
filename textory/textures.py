@@ -3,7 +3,6 @@
 import numpy as np
 import functools
 import dask.array as da
-from scipy.ndimage.filters import convolve
 
 from .util import view, _dask_neighbour_diff_squared, _win_view_stat, window_sum
 
@@ -67,7 +66,7 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
 
 def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
-    Calculate moveing window variogram with specified
+    Calculate moveing window madogram with specified
     lag for array.
     
     Parameters
@@ -84,26 +83,13 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     Returns
     -------
     array like
-        Array where each element is the variogram of the window around the element
+        Array where each element is the madogram of the window around the element
     """
-    diff = _dask_neighbour_diff_squared(x, lag=lag)
-
-    k = create_kernel(n=win_size, geom=win_geom)
-
-    #create convolve function with reduced parameters for mapping
-    pcon = functools.partial(convolve, weights=k)
+    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_madogram")
     
-    conv_padding = int(win_size//2)
-    res = diff.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding})
+    res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
-    #calculate 1/2N part of variogram
-    neighbours = num_neighbours(lag)
-    
-    num_pix = np.sum(k)
-    
-    factor = 2 * num_pix * neighbours
-    
-    return res / factor
+    return res
 
 
 def window_statistic(x, stat="nanmean", win_size=5, win_geom="square", **kwargs):

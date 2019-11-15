@@ -4,6 +4,7 @@ import functools
 import numpy as np
 import dask.array as da
 import skimage as ski
+from scipy.ndimage.filters import convolve
 #import bottlenack as bn
 
 def view(offset_y, offset_x, size_y, size_x, step=1):
@@ -133,9 +134,11 @@ def create_kernel(n=5, geom="square", kernel=None):
     return k
 
 
-def neighbour_diff_variogram(x, y):
+def nd_variogram(x, y):
     """
-    Inner most calculation step of variogram
+    Inner most calculation step of variogram and pseudo-cross-variogram
+
+    This function is used in the inner most loop of `neighbour_diff_squared`.
 
     Parameters
     ----------
@@ -146,7 +149,67 @@ def neighbour_diff_variogram(x, y):
     np.array
 
     """
-    res =  (x - y)**2
+    res =  np.square(x - y)
+
+    return res
+
+
+def nd_madogram(x, y, *args):
+    """
+    Inner most calculation step of madogram
+
+    This function is used in the inner most loop of `neighbour_diff_squared`.
+
+    Parameters
+    ----------
+    x, y : np.array
+
+    Returns
+    -------
+    np.array
+
+    """
+    res =  np.abs(x - y)
+
+    return res
+
+
+def nd_rodogram(x, y, *args):
+    """
+    Inner most calculation step of rodogram
+
+    This function is used in the inner most loop of `neighbour_diff_squared`.
+
+    Parameters
+    ----------
+    x, y : np.array
+
+    Returns
+    -------
+    np.array
+
+    """
+    res =  np.sqr(np.abs(x - y))
+
+    return res
+
+
+def nd_cross_variogram(x1, y2, x2, y1):
+    """
+    Inner most calculation step of cross-variogram
+
+    This function is used in the inner most loop of `neighbour_diff_squared`.
+
+    Parameters
+    ----------
+    x, y : np.array
+
+    Returns
+    -------
+    np.array
+
+    """
+    res =  (x1 - x2)*(y1 - y2)
 
     return res
 
@@ -180,7 +243,6 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
     radius = win // 2
     rows, cols = arr1.shape
     
-    #arr1 = np.asarray(arr1)
     
     if arr2 is None:
         arr2 = arr1.copy()
@@ -199,7 +261,14 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
         for x in x_r:
             x_off = x - radius
             view_in, view_out = view(y_off, x_off, rows, cols)
+            #if func == "nd_cross_variogram":
+                #out_arr[view_out] += method(arr1[view_out], arr2[view_in], arr1[view_in], arr2[view_out])
+            #else:
+                #out_arr[view_out] += method(arr1[view_out], arr2[view_in])
             out_arr[view_out] += method(arr1[view_out], arr2[view_in])
+            #a1 = arr1[view_out]
+            #a2 = arr2[view_in]
+            #out_arr[view_out] += (a1 - a2)**2
             
     return out_arr
 
