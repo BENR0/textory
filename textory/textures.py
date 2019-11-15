@@ -85,7 +85,7 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     array like
         Array where each element is the madogram of the window around the element
     """
-    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_madogram")
+    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_madogram")
     
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
