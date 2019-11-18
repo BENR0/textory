@@ -5,7 +5,7 @@ Installation Instructions
 Pip-based Installation
 ======================
 
-Textory is currently only available from via github but can be installed
+Textory is currently only available via github but can be installed
 with pip:
 
 .. code-block:: bash
