@@ -4,7 +4,7 @@ import numpy as np
 import functools
 import dask.array as da
 
-from .util import (view, neighbour_diff_squared, _dask_neighbour_diff_squared,
+from .util import (neighbour_diff_squared, _dask_neighbour_diff_squared,
                   _win_view_stat, window_sum, xr_wrapper)
 
 @xr_wrapper

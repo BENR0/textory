@@ -1,1 +1,1 @@
-from textory import textures
+from textory import textures, statistics

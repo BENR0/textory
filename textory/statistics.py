@@ -5,7 +5,7 @@ import functools
 import dask.array as da
 from scipy.ndimage.filters import convolve
 
-from util import view, create_kernel, num_neighbours, _dask_neighbour_diff_squared
+from .util import num_neighbours, neighbour_diff_squared, _dask_neighbour_diff_squared
 
 
 def variogram(x, lag=1):
@@ -24,7 +24,10 @@ def variogram(x, lag=1):
     float
         Variogram
     """
-    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+    else:
+        diff = neighbour_diff_squared(x, lag=lag, func="nd_variogram")
     
     res = np.nansum(diff)
     
@@ -56,7 +59,10 @@ def pseudo_cross_variogram(x, y, lag=1):
     float
         Pseudo-variogram between the two arrays
     """
-    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_variogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+    else:
+        diff = neighbour_diff_squared(x, lag=lag, func="nd_variogram")
     
     res = np.nansum(diff)
     
