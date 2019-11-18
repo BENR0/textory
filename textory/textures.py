@@ -4,8 +4,8 @@ import numpy as np
 import functools
 import dask.array as da
 
-from .util import view, neighbour_diff_squared, _dask_neighbour_diff_squared,
-                  _win_view_stat, window_sum, xr_wrapper
+from .util import (view, neighbour_diff_squared, _dask_neighbour_diff_squared,
+                  _win_view_stat, window_sum, xr_wrapper)
 
 @xr_wrapper
 def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):

@@ -3,6 +3,7 @@
 import functools
 import numpy as np
 import dask.array as da
+import xarray as xr
 import skimage as ski
 from scipy.ndimage.filters import convolve
 #import bottlenack as bn
@@ -395,16 +396,16 @@ def xr_wrapper(fun):
         if isinstance(args[0], xr.core.dataarray.DataArray):
             out = args[0].copy()
             if len(args) == 2:
-                out.data = fun(args[0].data, args[1].data, kwargs)
+                out.data = fun(args[0].data, args[1].data, **kwargs)
             else:
-                out.data = fun(args[0].data, kwargs)
+                out.data = fun(args[0].data, **kwargs)
             out.attrs["name"] = fun.__name__ + "_{}".format(args[0].attrs["name"])
-            out.name = da_out.attrs["name"]
+            out.name = out.attrs["name"]
         else:
             if len(args) == 2:
-                out = fun(args[0], args[1], kwargs)
+                out = fun(args[0], args[1], **kwargs)
             else:
-                out = fun(args[0], kwargs)
+                out = fun(args[0], **kwargs)
         
         return out
     return wrapped_fun
