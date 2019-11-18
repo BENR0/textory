@@ -14,7 +14,7 @@ textory.textures module
 
 
 textory.statistics module
------------------------
+--------------------------
 
 .. automodule:: textory.statistics
    :members:

@@ -5,7 +5,6 @@ Basic usage
 Calculating textures
 ======================
 
-- list formulas of variogram textures
 - all similar parameters
 - basic description influence of parameters
 - input: dask arrays?! -> make wrapper to use normal np.arrays?!
@@ -24,5 +23,5 @@ Calculating textures
    tx.textures.variogram(data, lag=2, win_size=7)
 
 
-Calculating whole image statistics
-==================================
+Calculating non windowed statistics
+===================================

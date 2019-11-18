@@ -19,6 +19,7 @@ It can also be used conveniantly with xarrays and Satpy scenes.
    :caption: Contents:
 
    install
+   overview
    usage
 
 .. toctree::
