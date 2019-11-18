@@ -57,3 +57,21 @@ html_theme = 'sphinx_rtd_theme'# 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    'dask': ('https://docs.dask.org/en/latest', None),
+    'geoviews': ('http://geoviews.org', None),
+    'jobqueue': ('https://jobqueue.dask.org/en/latest', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy', None),
+    'pydecorate': ('https://pydecorate.readthedocs.io/en/stable', None),
+    'pyorbital': ('https://pyorbital.readthedocs.io/en/stable', None),
+    'pyproj': ('https://pyproj4.github.io/pyproj/dev', None),
+    'pyresample': ('https://pyresample.readthedocs.io/en/stable', None),
+    'python': ('https://docs.python.org/3', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+    'trollimage': ('https://trollimage.readthedocs.io/en/stable', None),
+    'trollsift': ('https://trollsift.readthedocs.io/en/stable', None),
+    'satpy': ('https://satpy.readthedocs.io/en/stable', None),
+    'xarray': ('https://xarray.pydata.org/en/stable', None)
+}
