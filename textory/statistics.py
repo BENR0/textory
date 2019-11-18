@@ -51,8 +51,8 @@ def pseudo_cross_variogram(x, y, lag=1):
     
     Parameters
     ----------
-    x : array like
-        Input array
+    x, y : array like
+        Input arrays
     lag : int
         Lag distance for variogram, defaults to 1.
     
