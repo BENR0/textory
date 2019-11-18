@@ -4,7 +4,7 @@ import numpy as np
 import functools
 import dask.array as da
 
-from .util import view, _dask_neighbour_diff_squared, _win_view_stat, window_sum
+from .util import view, neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat, window_sum
 
 
 def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
@@ -28,7 +28,10 @@ def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     array like
         Array where each element is the variogram of the window around the element
     """
-    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+    else:
+        diff = neighbour_diff_squared(x, lag=lag, func="nd_variogram")
 
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
@@ -57,7 +60,10 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
         Array where each element is the pseudo-variogram
         between the two arrays of the window around the element.
     """
-    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_variogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_variogram")
+    else:
+        diff = neighbour_diff_squared(x, y, lag, func="nd_variogram")
     
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
@@ -86,7 +92,10 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
         Array where each element is the pseudo-variogram
         between the two arrays of the window around the element.
     """
-    diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_cross_variogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_cross_variogram")
+    else:
+        diff = neighbour_diff_squared(x, y, lag, func="nd_cross_variogram")
     
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
@@ -114,7 +123,10 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     array like
         Array where each element is the madogram of the window around the element
     """
-    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_madogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_madogram")
+    else:
+        diff = neighbour_diff_squared(x, lag=lag, func="nd_madogram")
     
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
@@ -142,7 +154,10 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     array like
         Array where each element is the madogram of the window around the element
     """
-    diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_rodogram")
+    if isinstance(x, da.core.Array):
+        diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_rodogram")
+    else:
+        diff = neighbour_diff_squared(x, lag=lag, func="nd_rodogram")
     
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
     
@@ -180,8 +195,11 @@ def window_statistic(x, stat="nanmean", win_size=5, win_geom="square", **kwargs)
     #create view_as_windows function with reduced parameters for mapping
     pcon = functools.partial(_win_view_stat, win_size=win_size, stat=stat)
     
-    conv_padding = int(win_size//2)
-    res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})#, trim=False)
+    if isinstance(x, da.core.Array):
+        conv_padding = int(win_size//2)
+        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})#, trim=False)
+    else:
+        res = pcon(x)
 
     return res
 
