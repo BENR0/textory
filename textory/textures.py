@@ -4,9 +4,10 @@ import numpy as np
 import functools
 import dask.array as da
 
-from .util import view, neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat, window_sum
+from .util import view, neighbour_diff_squared, _dask_neighbour_diff_squared,
+                  _win_view_stat, window_sum, xr_wrapper
 
-
+@xr_wrapper
 def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window variogram with specified
@@ -38,6 +39,7 @@ def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     return res
 
 
+@xr_wrapper
 def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window pseudo-variogram with specified
@@ -70,6 +72,7 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
     return res
 
 
+@xr_wrapper
 def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window pseudo-variogram with specified
@@ -102,6 +105,7 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
     return res
 
 
+@xr_wrapper
 def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window madogram with specified
@@ -133,6 +137,7 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     return res
 
 
+@xr_wrapper
 def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window rodogram with specified
@@ -164,6 +169,7 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     return res
 
 
+@xr_wrapper
 def window_statistic(x, stat="nanmean", win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window pseudo-variogram with specified
