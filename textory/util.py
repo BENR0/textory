@@ -392,6 +392,7 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
     return res
 
 def xr_wrapper(fun):
+    @functools.wraps(fun)
     def wrapped_fun(*args, **kwargs):
         if isinstance(args[0], xr.core.dataarray.DataArray):
             out = args[0].copy()

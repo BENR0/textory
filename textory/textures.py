@@ -4,8 +4,7 @@ import numpy as np
 import functools
 import dask.array as da
 
-from .util import (neighbour_diff_squared, _dask_neighbour_diff_squared,
-                  _win_view_stat, window_sum, xr_wrapper)
+from .util import neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat, window_sum, xr_wrapper
 
 @xr_wrapper
 def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
@@ -47,7 +46,7 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
     
     Parameters
     ----------
-    x : array like
+    x, y : array like
         Input array
     lag : int
         Lag distance for variogram, defaults to 1.
@@ -80,7 +79,7 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
     
     Parameters
     ----------
-    x : array like
+    x, y : array like
         Input array
     lag : int
         Lag distance for variogram, defaults to 1.
