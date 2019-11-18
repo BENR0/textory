@@ -20,7 +20,7 @@ def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Lag distance for variogram, defaults to 1.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
+    win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
     
     Returns
@@ -48,7 +48,7 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
         Lag distance for variogram, defaults to 1.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
+    win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
     
     Returns
@@ -77,7 +77,7 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
         Lag distance for variogram, defaults to 1.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
+    win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
     
     Returns
@@ -106,7 +106,7 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Lag distance for variogram, defaults to 1.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
+    win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
     
     Returns
@@ -134,7 +134,7 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Lag distance for variogram, defaults to 1.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
+    win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
     
     Returns
@@ -162,7 +162,7 @@ def window_statistic(x, stat="nanmean", win_size=5, win_geom="square", **kwargs)
         Statistical measure to calculate.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    geom : {"square", "round"}
+    win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
     
     Returns
