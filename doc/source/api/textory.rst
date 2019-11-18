@@ -11,3 +11,12 @@ textory.textures module
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+textory.statistics module
+-----------------------
+
+.. automodule:: textory.statistics
+   :members:
+   :undoc-members:
+   :show-inheritance:
