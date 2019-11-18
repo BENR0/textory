@@ -1,3 +1,8 @@
+#TODO
+- satpy.Scene and xr.Dataset wrappers
+- document non windowed variograms
+- further notes on calculation (e.g. padding, precision at boundaries etc.)
+
 =========================
 Basic usage
 =========================
