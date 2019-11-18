@@ -170,10 +170,9 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
 
 
 @xr_wrapper
-def window_statistic(x, stat="nanmean", win_size=5, win_geom="square", **kwargs):
+def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
     """
-    Calculate moveing window pseudo-variogram with specified
-    lag for the two arrays.
+    Calculate the specified statistic with a moveing window of size `win_size`.
     
     Parameters
     ----------
@@ -183,8 +182,6 @@ def window_statistic(x, stat="nanmean", win_size=5, win_geom="square", **kwargs)
         Statistical measure to calculate.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    win_geom : {"square", "round"}
-        Geometry of the kernel. Defaults to square.
     
     Returns
     -------
