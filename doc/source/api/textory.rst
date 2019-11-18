@@ -1,8 +1,7 @@
 Textory package
 ===============
 
-Submodules
-----------
+.. toctree::
 
 textory.textures module
 -----------------------
@@ -11,7 +10,6 @@ textory.textures module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 textory.statistics module
 --------------------------

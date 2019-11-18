@@ -3,12 +3,12 @@
 - document non windowed variograms
 - further notes on calculation (e.g. padding, precision at boundaries etc.)
 
-=========================
-Basic usage
-=========================
+==========================
+Scene and Dataset wrappers
+==========================
 
-Calculating textures
-======================
+Calculate textures for Scene
+============================
 
 - list formulas of variogram textures
 - all similar parameters
@@ -28,6 +28,3 @@ Calculating textures
 
    tx.textures.variogram(data, lag=2, win_size=7)
 
-
-Calculating whole image statistics
-==================================

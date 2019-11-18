@@ -27,7 +27,6 @@ It can also be used conveniantly with xarrays and Satpy scenes.
     Textory API <api/textory>
 
 
-
 Indices and tables
 ==================
 

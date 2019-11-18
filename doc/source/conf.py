@@ -40,6 +40,9 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+# The suffix of the source filenames
+source_suffix = '.rst'
+
 # The master toctree document
 master_doc = 'index'
 
@@ -61,17 +64,9 @@ html_static_path = ['_static']
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'dask': ('https://docs.dask.org/en/latest', None),
-    'geoviews': ('http://geoviews.org', None),
-    'jobqueue': ('https://jobqueue.dask.org/en/latest', None),
     'numpy': ('https://docs.scipy.org/doc/numpy', None),
-    'pydecorate': ('https://pydecorate.readthedocs.io/en/stable', None),
-    'pyorbital': ('https://pyorbital.readthedocs.io/en/stable', None),
-    'pyproj': ('https://pyproj4.github.io/pyproj/dev', None),
-    'pyresample': ('https://pyresample.readthedocs.io/en/stable', None),
     'python': ('https://docs.python.org/3', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-    'trollimage': ('https://trollimage.readthedocs.io/en/stable', None),
-    'trollsift': ('https://trollsift.readthedocs.io/en/stable', None),
     'satpy': ('https://satpy.readthedocs.io/en/stable', None),
     'xarray': ('https://xarray.pydata.org/en/stable', None)
 }
