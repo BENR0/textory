@@ -7,6 +7,8 @@ from scipy.ndimage.filters import convolve
 
 from .util import num_neighbours, neighbour_diff_squared, _dask_neighbour_diff_squared
 
+#TODO
+# - add stats for rodogram, madogram, cross variogram
 
 def variogram(x, lag=1):
     """
