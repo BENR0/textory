@@ -16,7 +16,6 @@ It can also be used conveniantly with xarrays and Satpy scenes.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    install
    overview
