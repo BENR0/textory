@@ -22,6 +22,6 @@ Textory is able to calculate:
 - Pseudo Cross Variogram: :math:`\gamma(h) = \frac{1}{2n(h)} \sum_{i=1}^{n(h)} (v(x_{i}) - w(x_{i}+h))^{2}`
 - basic statistics (e.g. min, max, median, etc. (only for square windows))
 
-for different lag distances and window sizes (round and square windows) for numpy and dask arrays as
+for different lag distances and window sizes (round and square windows) for numpy and :class:`dask.array.Array` as
 well as :class:`xarray.DataArray`. Furthermore conveniant functions to easily caluculate these statistics
 for :class:`xarray.Dataset` and :class:`satpy.scene.Scene` are available.
