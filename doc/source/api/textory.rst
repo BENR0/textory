@@ -18,3 +18,11 @@ textory.statistics module
    :members:
    :undoc-members:
    :show-inheritance:
+
+textory.wrappers module
+--------------------------
+
+.. automodule:: textory.wrappers
+   :members:
+   :undoc-members:
+   :show-inheritance:
