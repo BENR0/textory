@@ -20,6 +20,7 @@ It can also be used conveniantly with xarrays and Satpy scenes.
    install
    overview
    usage
+   satpy_usage
 
 .. toctree::
    :maxdepth: 1
