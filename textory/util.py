@@ -404,12 +404,12 @@ def xr_wrapper(fun):
                 out.attrs["name"] = fun.__name__ + "_{}".format(args[0].attrs["name"])
 
             if fun.__name__ == "window_statistic":
-                out.attrs("statistic") = kwargs.get("func")
+                out.attrs["statistic"] = kwargs.get("func")
             else:
-                out.attrs("lag_distance") = kwargs.get("lag")
-                out.attrs("window_geometry") = kwargs.get("win_geom")
+                out.attrs["lag_distance"] = kwargs.get("lag")
+                out.attrs["window_geometry"] = kwargs.get("win_geom")
 
-            out.attrs("window_size") = kwargs.get("win_size")
+            out.attrs["window_size"] = kwargs.get("win_size")
             out.name = out.attrs["name"]
         else:
             if len(args) == 2:
