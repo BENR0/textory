@@ -76,7 +76,7 @@ def textures_for_xr_dataset(xrds, textures, append=True):
 
     Returns
     -------
-    satpy.Scene
+    :class:`xarray.Dataset`
 
     """
     out_ds = xrds.copy()
