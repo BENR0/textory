@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name = "textory",
-    version = "0.0.1b",
+    version = "0.1.0b",
     author = "Benjamin Roesner",
     author_email = "benjamin.roesner@geo.uni-marburg.de",
     description = "Image Textures",
@@ -18,12 +18,6 @@ setuptools.setup(
                       "dask",
                       "distributed",
                       "satpy"],
-    #package_data={
-        #"hyfog": ["data/rasterfiles/*",
-                  #"data/shapefiles/*",
-                  #"data/station_metadata/*"
-                  #"opencl/opencl/*"],
-    #},
     classifiers=(
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
