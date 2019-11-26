@@ -205,6 +205,34 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
 
     return res
 
+@xr_wrapper
+def tpi(x, win_size=5, win_geom="square", **kwargs):
+    """
+    Calculate topographic position index for a given window size.
+    
+    Parameters
+    ----------
+    x : array like
+        Input array
+    win_size : int, optional
+        Length of one side of window. Window will be of size window*window.
+    win_geom : {"square", "round"}
+        Geometry of the kernel. Defaults to square.
+    
+    Returns
+    -------
+    array like
+        Array with tpi
+    """
+    custom_kernel = create_kernel(n=win_size, geom=win_geom)
+    center_ind = win_size//2
+    custom_kernel[center_ind, center_ind] = 0
+
+    
+    avg = convolution(x, kernel=custom_kernel)
+    res = x - avg
+    
+    return res
 
 #def variogram_diff_old(band1, band2, lag=None, window=None):
     #band2 = np.pad(band2, ((1,1),(1,1)), mode="edge")

@@ -309,7 +309,51 @@ def _dask_neighbour_diff_squared(x, y=None, lag=1, func="nd_variogram"):
     return res
 
 
-def window_sum(x, lag, win_size, win_geom):
+def convolution(x, win_size=5, win_geom="square", kernel=None):
+    """
+    Convolute array with kernel and normalize by count of kernel
+    elements > 0.
+
+    Parameters
+    ----------
+    x : array like
+        Input array
+    win_size : int, optional
+        Length of one side of window. Window will be of size window*window.
+        Defaults to 5.
+    geom : {"square", "round"}
+        Geometry of the kernel. Defaults to square.
+    kernel : np.array, optional
+        Custom kernel to use for convolution. If specified `geom` and `win_size`
+        parameter will be ignored.
+    
+    Returns
+    -------
+    array like
+        Array where each element is the variogram of the window around the element
+
+    """
+    if kernel is not None:
+        k = kernel
+    else:
+        k = create_kernel(n=win_size, geom=win_geom)
+
+    #create convolve function with reduced parameters for map_overlap
+    pcon = functools.partial(convolve, weights=k)
+    
+    if isinstance(x, da.core.Array):
+        conv_padding = int(win_size//2)
+        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding})
+    else:
+        res = pcon(x)
+    
+    kernel_significant_elements = np.where(k>0, 1, 0)
+    num_pix = np.sum(kernel_significant_elements)
+    
+    return res / num_pix
+
+
+def window_sum(x, lag=1, win_size=5, win_geom="square", kernel=None):
     """
     Calculate the window sum for the various textures
 
@@ -321,8 +365,12 @@ def window_sum(x, lag, win_size, win_geom):
         Lag distance for variogram, defaults to 1.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
+        Defaults to 5.
     geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
+    kernel : np.array, optional
+        Custom kernel to use for convolution. If specified `geom` and `win_size`
+        parameter will be ignored.
     
     Returns
     -------
@@ -330,25 +378,16 @@ def window_sum(x, lag, win_size, win_geom):
         Array where each element is the variogram of the window around the element
 
     """
-    k = create_kernel(n=win_size, geom=win_geom)
+    
+    res = convolution(x, win_size=win_size, win_geom=win_geom, kernel=kernel)
 
-    #create convolve function with reduced parameters for map_overlap
-    pcon = functools.partial(convolve, weights=k)
-    
-    if isinstance(x, da.core.Array):
-        conv_padding = int(win_size//2)
-        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding})
-    else:
-        res = pcon(x)
-    
     #calculate 1/2N part of variogram
     neighbours = num_neighbours(lag)
     
-    num_pix = np.sum(k)
-    
-    factor = 2 * num_pix * neighbours
+    factor = 2 * neighbours
 
     return res / factor
+
 
 def _win_view_stat(x, win_size=5, stat="nanmean"):
     """
