@@ -230,7 +230,7 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
     custom_kernel[center_ind, center_ind] = 0
     
     avg = convolution(x, kernel=custom_kernel)
-    res = x - avg
+    res = avg - x
     
     return res
 
