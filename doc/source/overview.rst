@@ -21,6 +21,7 @@ Textory is able to calculate:
 - Cross Variogram: :math:`\gamma(h) = \frac{1}{2n(h)} \sum_{i=1}^{n(h)} (v(x_{i}) - v(x_{i}+h))*(w(x_{i}) - w(x_{i}+h))`
 - Pseudo Cross Variogram: :math:`\gamma(h) = \frac{1}{2n(h)} \sum_{i=1}^{n(h)} (v(x_{i}) - w(x_{i}+h))^{2}`
 - basic statistics (e.g. min, max, median, etc. (only for square windows))
+- TPI (Topographic Position Index) for different window sizes and geometries.
 
 for different lag distances and window sizes (round and square windows) for numpy and :class:`dask.array.Array` as
 well as :class:`xarray.DataArray`. Furthermore convenient functions to easily caluculate these statistics

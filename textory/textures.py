@@ -4,7 +4,8 @@ import numpy as np
 import functools
 import dask.array as da
 
-from .util import neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat, window_sum, xr_wrapper
+from .util import (neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat,
+                   window_sum, create_kernel, convolution, xr_wrapper)
 
 @xr_wrapper
 def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
@@ -227,7 +228,6 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
     custom_kernel = create_kernel(n=win_size, geom=win_geom)
     center_ind = win_size//2
     custom_kernel[center_ind, center_ind] = 0
-
     
     avg = convolution(x, kernel=custom_kernel)
     res = x - avg
