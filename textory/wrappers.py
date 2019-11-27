@@ -14,7 +14,12 @@ the textures, depending on the ``append`` parameter of the function.
 
 The ``textures`` parameter takes a dictionary where the keys are a tuple with the texture
 and the parameters which to calculate and the values are a list (or list of tuples in the
-case of textures which require two inputs) of the datasets to apply the texture to.
+case of textures which require two inputs) of the datasets to apply the texture to in the general
+form of:
+
+.. code-block:: python
+
+    textures_dict = {("texture_name", lag, win_size, win_geom): [list of dataset names]}
 
 The following example would calculate the variogram with lag=2, win_size=7, win_geom="square"
 for the datasets with name "IR_039" and "IR_108" as well as the cross variogram with lag=1,
