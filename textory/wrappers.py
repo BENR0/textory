@@ -76,15 +76,20 @@ def textures_for_scene(scn, textures, append=True):
         out_scn = Scene()
 
     for tex, bands in textures.items():
-        tex_name, lag, win_size, win_geom = tex
-        fun = getattr(txt, tex_name)
-
         for b in bands:
-            if tex_name in ["cross_variogram", "pseudo_cross_variogram"]:
-                x, y = b
-                tex_res = fun(scn[x], scn[y], lag=lag, win_size=win_size, win_geom=win_geom)
+            if tex[0] == "window_statistic":
+                tex_name, stat, win_size = tex
+                fun = getattr(txt, tex_name)
+                tex_res = fun(scn[b], stat=stat, win_size=win_size)
             else:
-                tex_res = fun(scn[b], lag=lag, win_size=win_size, win_geom=win_geom)
+                tex_name, lag, win_size, win_geom = tex
+                fun = getattr(txt, tex_name)
+
+                if tex_name in ["cross_variogram", "pseudo_cross_variogram"]:
+                    x, y = b
+                    tex_res = fun(scn[x], scn[y], lag=lag, win_size=win_size, win_geom=win_geom)
+                else:
+                    tex_res = fun(scn[b], lag=lag, win_size=win_size, win_geom=win_geom)
 
             for k in strip_attrs:
                 tex_res.attrs.pop(k)
@@ -124,15 +129,21 @@ def textures_for_xr_dataset(xrds, textures, append=True):
         out_ds = out_ds.drop(var_names)
 
     for tex, bands in textures.items():
-        tex_name, lag, win_size, win_geom = tex
-        fun = getattr(txt, tex_name)
-
         for b in bands:
-            if tex_name in ["cross_variogram", "pseudo_cross_variogram"]:
-                x, y = b
-                tex_res = fun(xrds[x], xrds[y], lag=lag, win_size=win_size, win_geom=win_geom)
+            if tex[0] == "window_statistic":
+                tex_name, stat, win_size = tex
+                fun = getattr(txt, tex_name)
+                tex_res = fun(scn[b], stat=stat, win_size=win_size)
             else:
-                tex_res = fun(xrds[b], lag=lag, win_size=win_size, win_geom=win_geom)
+                tex_name, lag, win_size, win_geom = tex
+                fun = getattr(txt, tex_name)
+
+                if tex_name in ["cross_variogram", "pseudo_cross_variogram"]:
+                    x, y = b
+                    tex_res = fun(scn[x], scn[y], lag=lag, win_size=win_size, win_geom=win_geom)
+                else:
+                    tex_res = fun(scn[b], lag=lag, win_size=win_size, win_geom=win_geom)
+
 
             out_ds[tex_res.name] = tex_res
 
