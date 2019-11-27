@@ -309,7 +309,7 @@ def _dask_neighbour_diff_squared(x, y=None, lag=1, func="nd_variogram"):
     return res
 
 
-def convolution(x, win_size=5, win_geom="square", kernel=None):
+def convolution(x, win_size=5, win_geom="square", kernel=None, **kwargs):
     """
     Convolute array with kernel and normalize by count of kernel
     elements > 0.
@@ -339,7 +339,7 @@ def convolution(x, win_size=5, win_geom="square", kernel=None):
         k = create_kernel(n=win_size, geom=win_geom)
 
     #create convolve function with reduced parameters for map_overlap
-    pcon = functools.partial(convolve, weights=k)
+    pcon = functools.partial(convolve, weights=k, mode="constant", cval=np.nan)
     
     if isinstance(x, da.core.Array):
         conv_padding = int(win_size//2)
@@ -378,7 +378,6 @@ def window_sum(x, lag=1, win_size=5, win_geom="square", kernel=None):
         Array where each element is the variogram of the window around the element
 
     """
-    
     res = convolution(x, win_size=win_size, win_geom=win_geom, kernel=kernel)
 
     #calculate 1/2N part of variogram
