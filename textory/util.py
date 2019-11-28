@@ -101,6 +101,51 @@ def num_neighbours(lag=1):
     
     return neighbours
 
+def neighbour_count(shape, kernel):
+	"""
+	Count the number of contributing pixels based on a kernel for
+    an array which gets convolved with that kernel.
+
+    This function gives precise count on the edges too.
+
+	Parameters
+	----------
+    shape : tuple
+        Shape of the array for which counts should be given
+    kernel : np.array
+        Each element in the array equal to 1 increases count by 1.
+
+    Returns
+    -------
+    np.array
+        Array with counts
+    """
+    win_size = kernel.shape[0]
+    t = np.ones((win_size,win_size), dtype=np.int)
+    corner_top_left = np.zeros_like(t)
+    k = kernel #np.ones((win_size,win_size))
+    center = win_size//2
+    #k[center, center] = 0
+
+    convolve(t, k, output=corner_top_left, mode="constant", cval=0)
+    corner_top_left = corner_top_left[0:center+1, 0:center+1]
+    
+    #shape / 2 in each dimension - (center+1) needs to be padded
+    pad_size = np.array(shape)/2 - (center + 1)
+    y_pad, x_pad = pad_size.astype(np.int)
+    
+    one = np.pad(corner_top_left, ((0,y_pad),(0,x_pad)), mode="edge")
+    #three = np.pad(corner_top_left[::-1,:], ((y_pad,0),(0,x_pad)), mode="edge")
+    #two = np.pad(corner_top_left[:,::-1], ((0,y_pad),(x_pad,0)), mode="edge")
+    #four = np.pad(corner_top_left[::-1,::-1], ((y_pad,0),(x_pad,0)), mode="edge")
+    three = one[::-1,:]
+    two = one[:,::-1]
+    four = one[::-1,::-1]
+    
+    counts = np.block([[one, two],[three, four]])
+    
+    return counts
+
 def create_kernel(n=5, geom="square", kernel=None):
     """
     Create a kernel of size n.
