@@ -1,6 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 import functools
+import decorator
 import numpy as np
 import dask.array as da
 import xarray as xr
@@ -429,34 +430,80 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
 
     return res
 
-def xr_wrapper(fun):
-    @functools.wraps(fun)
-    def wrapped_fun(*args, **kwargs):
-        if isinstance(args[0], xr.core.dataarray.DataArray):
-            out = args[0].copy()
-            if len(args) == 2:
-                out.data = fun(args[0].data, args[1].data, **kwargs)
-                out.attrs["name"] = fun.__name__ + "_{}_{}".format(args[0].attrs["name"], args[1].attrs["name"])
-            else:
-                out.data = fun(args[0].data, **kwargs)
-                out.attrs["name"] = fun.__name__ + "_{}".format(args[0].attrs["name"])
 
-            if fun.__name__ == "window_statistic":
-                out.attrs["statistic"] = kwargs.get("func")
-            else:
-                out.attrs["lag_distance"] = kwargs.get("lag")
-                out.attrs["window_geometry"] = kwargs.get("win_geom")
+#def xr_wrapper(fun):
+    ##functools wraps keeps docstrings
+    #@functools.wraps(fun)
+    #def wrapped_fun(*args, **kwargs):
+        #if isinstance(args[0], xr.core.dataarray.DataArray):
+            #out = args[0].copy()
+            #if len(args) == 2:
+                #out.data = fun(args[0].data, args[1].data, **kwargs)
+                #out.attrs["name"] = fun.__name__ + "_{}_{}".format(args[0].attrs["name"], args[1].attrs["name"])
+            #else:
+                #out.data = fun(args[0].data, **kwargs)
+                #out.attrs["name"] = fun.__name__ + "_{}".format(args[0].attrs["name"])
 
-            out.attrs["window_size"] = kwargs.get("win_size")
-            out.name = out.attrs["name"]
-        else:
-            if len(args) == 2:
-                out = fun(args[0], args[1], **kwargs)
-            else:
-                out = fun(args[0], **kwargs)
+            #if fun.__name__ == "window_statistic":
+                #out.attrs["statistic"] = kwargs.get("stat")
+                #out.name = out.attrs["name"] + "_{stat}_{win_size}".format(**kwargs)
+            #else:
+                #out.attrs["lag_distance"] = kwargs.get("lag")
+                #out.attrs["window_geometry"] = kwargs.get("win_geom")
+                #out.name = out.attrs["name"] + "_{lag}_{win_size}_{win_geom}".format(**kwargs)
+
+            #out.attrs["window_size"] = kwargs.get("win_size")
+        #else:
+            #if len(args) == 2:
+                #out = fun(args[0], args[1], **kwargs)
+            #else:
+                #out = fun(args[0], **kwargs)
         
-        return out
-    return wrapped_fun
+        #return out
+    #return wrapped_fun
+
+@decorator.decorator
+def xr_wrapper(fun, *args, **kwargs):
+    import inspect
+
+    run_sig = inspect.getfullargspec(fun)
+    params = dict(zip(run_sig.args, args))
+    params.pop("x")
+
+    if isinstance(args[0], xr.core.dataarray.DataArray):
+        out = args[0].copy()
+        x_input = args[0]
+        if "name" not in x_input.attrs.keys():
+            x_input.attrs["name"] = "Input array"
+        if "y" in params.keys():
+            y_input = args[1]
+            if "name" not in y_input.attrs.keys():
+                y_input.attrs["name"] = "Input array"
+
+            params.pop("y")
+            out.data = fun(x_input.data, y_input.data, **params)
+            out.attrs["name"] = fun.__name__ + "_{}_{}".format(x_input.attrs["name"], y_input.attrs["name"])
+        else:
+            out.data = fun(x_input.data, **params)
+            out.attrs["name"] = fun.__name__ + "_{}".format(x_input.attrs["name"])
+
+        if fun.__name__ == "window_statistic":
+            out.attrs["statistic"] = params.get("stat")
+            out.name = out.attrs["name"] + "_{stat}_{win_size}".format(**params)
+        else:
+            out.attrs["lag_distance"] = params.get("lag")
+            out.attrs["window_geometry"] = params.get("win_geom")
+            out.name = out.attrs["name"] + "_{lag}_{win_size}_{win_geom}".format(**params)
+
+        out.attrs["window_size"] = params.get("win_size")
+    else:
+        if "y" in params.keys():
+            out = fun(args[0], **params)
+        else:
+            out = fun(args[0], **params)
+    
+    return out
+
 
 ##########################
 #alternative version test
