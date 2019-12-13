@@ -1,0 +1,9 @@
+To reference this software use:
+
+@software{textory_2019,
+  author = {Benjamin Rösner},
+  title = {textory: Version 0.1.0b},
+  year = 2019,
+  version = {v.0.1.0b},
+  url = {https://github.com/BENR0/textory}
+}
