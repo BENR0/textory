@@ -30,18 +30,20 @@ win_size=5, and win_geom="round" between the datasets with name "WV_062" and "IR
     import textory as tx
 
     scn = Scene(...)
-    textures_dict = {("variogram", 2, 7, "square"): ["IR_039", "IR_108"], ("cross_variogram", 1, 5, "round"): [("WV_062", "IR_108")]}
+    textures_dict = {("variogram", 2, 7, "square"): ["IR_039", "IR_108"],
+                     ("cross_variogram", 1, 5, "round"): [("WV_062", "IR_108")]}
     scn_with_textures = tx.textures_for_scene(scn, textures=textures_dict)
 
 Calculate textures for xarray Dataset
 -------------------------------------
 
 The :func:`~textory.wrappers.textures_for_xr_dataset` function works similarly to the
-:func:`~textory.wrappers.textures_for_scene` function above but takes :class:`xarray.Dataset` 
+:func:`~textory.wrappers.textures_for_scene` function above but takes :class:`xarray.Dataset`
 as input and also returns a :class:`xarray.Dataset`.
 """
 import textory.textures as txt
 from satpy import Scene
+
 
 def textures_for_scene(scn, textures, append=True):
     """
@@ -125,7 +127,7 @@ def textures_for_xr_dataset(xrds, textures, append=True):
     """
     out_ds = xrds.copy()
     if not append:
-        var_names = [name for name, _ in ds.data_vars.items()]
+        var_names = [name for name, _ in out_ds.data_vars.items()]
         out_ds = out_ds.drop(var_names)
 
     for tex, bands in textures.items():
@@ -133,17 +135,16 @@ def textures_for_xr_dataset(xrds, textures, append=True):
             if tex[0] == "window_statistic":
                 tex_name, stat, win_size = tex
                 fun = getattr(txt, tex_name)
-                tex_res = fun(scn[b], stat=stat, win_size=win_size)
+                tex_res = fun(out_ds[b], stat=stat, win_size=win_size)
             else:
                 tex_name, lag, win_size, win_geom = tex
                 fun = getattr(txt, tex_name)
 
                 if tex_name in ["cross_variogram", "pseudo_cross_variogram"]:
                     x, y = b
-                    tex_res = fun(scn[x], scn[y], lag=lag, win_size=win_size, win_geom=win_geom)
+                    tex_res = fun(out_ds[x], out_ds[y], lag=lag, win_size=win_size, win_geom=win_geom)
                 else:
-                    tex_res = fun(scn[b], lag=lag, win_size=win_size, win_geom=win_geom)
-
+                    tex_res = fun(out_ds[b], lag=lag, win_size=win_size, win_geom=win_geom)
 
             out_ds[tex_res.name] = tex_res
 

@@ -8,17 +8,18 @@ from .util import num_neighbours, neighbour_diff_squared, _dask_neighbour_diff_s
 #TODO
 # - add stats for rodogram, madogram, cross variogram
 
+
 def variogram(x, lag=1):
     """
     Calculate variogram with specified lag for array.
-    
+
     Parameters
     ----------
     x : array like
         Input array
     lag : int
         Lag distance for variogram, defaults to 1.
-    
+
     Returns
     -------
     float
@@ -44,16 +45,16 @@ def variogram(x, lag=1):
 
 def pseudo_cross_variogram(x, y, lag=1):
     """
-    Calculate pseudo-variogram with specified lag for 
+    Calculate pseudo-variogram with specified lag for
     the two arrays.
-    
+
     Parameters
     ----------
     x, y : array like
         Input arrays
     lag : int
         Lag distance for variogram, defaults to 1.
-    
+
     Returns
     -------
     float
@@ -105,7 +106,6 @@ def pseudo_cross_variogram(x, y, lag=1):
     #win = 2*lag + 1
     #radius = int(win/2)
 
-
     #r = list(range(win))
     #for x in r:
         #x_off = x - radius
@@ -121,5 +121,3 @@ def pseudo_cross_variogram(x, y, lag=1):
             #out += (band1 - band2[y_off:-y_off, x_off:-x_off])**2
 
     #return out
-
-

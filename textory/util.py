@@ -9,19 +9,19 @@ import skimage as ski
 from scipy.ndimage.filters import convolve
 #import bottlenack as bn
 
+
 def view(offset_y, offset_x, size_y, size_x, step=1):
     """
     Calculates views for windowes operations on arrays.
-    
+
     For windowed operations on arrays instead of looping through
     every numpy element and then do a second loop for the window,
     the element loop can be substituted by shifting the whole array
     against itself while looping through the window.
-    
+
     In order to do this without padding the array first this implementation
     swaps views when the shift is "outside" the array dimensions.
-    
-   
+
     Parameters
     ----------
     offset_y : integer
@@ -33,34 +33,34 @@ def view(offset_y, offset_x, size_y, size_x, step=1):
     size_x : integer
         Number of columns of array
     step : integer, optional
-    
+
     Returns
     -------
     tuple of 2D numpy slices
-    
-    
+
+
     Example
     -------
     window_size = 3
 
     radius = int(window/2)
- 
+
     rows, columns = data.shape
     temp_sum = np.zeros((rows, columns))
- 
-    # Our window loop  
-    for y in range(window):
+
+    # Our window loop
+    # for y in range(window):
 
     #we need offsets from centre !
         y_off = y - radius
 
         for x in range(window):
             x_off = x - radius
- 
+
             view_in, view_out = view(y_off, x_off, rows, columns)
- 
+
             temp_sum[view_out] += data[view_in]
-    
+
     Notes
     -----
     Source: https://landscapearchaeology.org/2018/numpy-loops/
@@ -69,37 +69,41 @@ def view(offset_y, offset_x, size_y, size_x, step=1):
     x = abs(offset_x)
     y = abs(offset_y)
 
-    x_in = slice(x , size_x, step)
+    x_in = slice(x, size_x, step)
     x_out = slice(0, size_x - x, step)
 
     y_in = slice(y, size_y, step)
     y_out = slice(0, size_y - y, step)
 
     # the swapping trick
-    if offset_x < 0: x_in, x_out = x_out, x_in
-    if offset_y < 0: y_in, y_out = y_out, y_in
+    if offset_x < 0:
+        x_in, x_out = x_out, x_in
+    if offset_y < 0:
+        y_in, y_out = y_out, y_in
 
     # return window view (in) and main view (out)
     return np.s_[y_in, x_in], np.s_[y_out, x_out]
 
+
 def num_neighbours(lag=1):
     """
     Calculate number of neigbour pixels for a given lag.
-    
+
     Parameters
     ----------
     lag : int
         Lag distance, defaults to 1.
-        
+
     Returns
     -------
     int
         Number of neighbours
     """
-    win_size = 2*lag + 1
-    neighbours = win_size**2 - (2*(lag-1) + 1)**2
+    win_size = 2 * lag + 1
+    neighbours = win_size**2 - (2 * (lag - 1) + 1)**2
 
     return neighbours
+
 
 def neighbour_count(shape, kernel):
     """
@@ -121,35 +125,36 @@ def neighbour_count(shape, kernel):
         Array with counts
     """
     win_size = kernel.shape[0]
-    t = np.ones((win_size,win_size), dtype=np.int)
+    t = np.ones((win_size, win_size), dtype=np.int)
     corner_top_left = np.zeros_like(t)
-    k = kernel #np.ones((win_size,win_size))
-    center = win_size//2
+    k = kernel
+    center = win_size // 2
     #k[center, center] = 0
 
     convolve(t, k, output=corner_top_left, mode="constant", cval=0)
-    corner_top_left = corner_top_left[0:center+1, 0:center+1]
+    corner_top_left = corner_top_left[0:center + 1, 0:center + 1]
 
     #shape / 2 in each dimension - (center+1) needs to be padded
-    pad_size = np.array(shape)/2 - (center + 1)
+    pad_size = np.array(shape) / 2 - (center + 1)
     y_pad, x_pad = pad_size.astype(np.int)
 
-    one = np.pad(corner_top_left, ((0,y_pad),(0,x_pad)), mode="edge")
+    one = np.pad(corner_top_left, ((0, y_pad), (0, x_pad)), mode="edge")
     #three = np.pad(corner_top_left[::-1,:], ((y_pad,0),(0,x_pad)), mode="edge")
     #two = np.pad(corner_top_left[:,::-1], ((0,y_pad),(x_pad,0)), mode="edge")
     #four = np.pad(corner_top_left[::-1,::-1], ((y_pad,0),(x_pad,0)), mode="edge")
-    three = one[::-1,:]
-    two = one[:,::-1]
-    four = one[::-1,::-1]
+    three = one[::-1, :]
+    two = one[:, ::-1]
+    four = one[::-1, ::-1]
 
-    counts = np.block([[one, two],[three, four]])
+    counts = np.block([[one, two], [three, four]])
 
     return counts
+
 
 def create_kernel(n=5, geom="square", kernel=None):
     """
     Create a kernel of size n.
-    
+
     Parameters
     ----------
     n : int, optional
@@ -159,14 +164,14 @@ def create_kernel(n=5, geom="square", kernel=None):
     kernel : np.array, optional
         Custom kernel to convolve with. If kernel argument is given
         parameters n and geom are ignored.
-    
+
     Returns
     -------
     np.array
     """
     if kernel is None:
         if geom == "square":
-            k = np.ones((n,n))
+            k = np.ones((n, n))
         elif geom == "round":
             xind, yind = np.indices((n, n))
             c = n // 2
@@ -196,7 +201,7 @@ def nd_variogram(x, y):
     np.array
 
     """
-    res =  np.square(x - y)
+    res = np.square(x - y)
 
     return res
 
@@ -216,7 +221,7 @@ def nd_madogram(x, y, *args):
     np.array
 
     """
-    res =  np.abs(x - y)
+    res = np.abs(x - y)
 
     return res
 
@@ -236,7 +241,7 @@ def nd_rodogram(x, y, *args):
     np.array
 
     """
-    res =  np.sqr(np.abs(x - y))
+    res = np.sqr(np.abs(x - y))
 
     return res
 
@@ -256,7 +261,7 @@ def nd_cross_variogram(x1, y2, x2, y1):
     np.array
 
     """
-    res =  (x1 - x2)*(y1 - y2)
+    res = (x1 - x2) * (y1 - y2)
 
     return res
 
@@ -265,10 +270,10 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
     """
     Calculates the squared difference between a pixel and its neighbours
     at the specified lag.
-    
+
     If only one array is supplied variogram is calculated
     for itself (same array is used as the second array).
-    
+
     Parameters
     ----------
     arr1 : np.array
@@ -277,19 +282,18 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
         The lag distance for the variogram, defaults to 1.
     func : {nd_variogram, nd_pseudo_cross_variogram, nd_madogram, nd_rodogram, nd_cross_variogram}
         Calculation method of innermost step of the different variogram methods.
-    
+
     Returns
     -------
     np.array
         Variogram
-    
+
     """
     method = globals()[func]
 
-    win = 2*lag + 1
+    win = 2 * lag + 1
     radius = win // 2
     rows, cols = arr1.shape
-
 
     if arr2 is None:
         arr2 = arr1.copy()
@@ -325,7 +329,7 @@ def _dask_neighbour_diff_squared(x, y=None, lag=1, func="nd_variogram"):
     """
     Calculate quared difference between pixel and its
     neighbours at specified lag for dask arrays
-    
+
     Parameters
     ----------
     x : np.array
@@ -334,7 +338,7 @@ def _dask_neighbour_diff_squared(x, y=None, lag=1, func="nd_variogram"):
     lag : int, optional
     func : {nd_variogram, nd_madogram, nd_rodogram, nd_cross_variogram}
         Calculation method of innermost step of different variogram methods.
-    
+
     Returns
     -------
     np.array
@@ -372,7 +376,7 @@ def convolution(x, win_size=5, win_geom="square", kernel=None, **kwargs):
     kernel : np.array, optional
         Custom kernel to use for convolution. If specified `geom` and `win_size`
         parameter will be ignored.
-    
+
     Returns
     -------
     array like
@@ -388,12 +392,12 @@ def convolution(x, win_size=5, win_geom="square", kernel=None, **kwargs):
     pcon = functools.partial(convolve, weights=k, mode="constant", cval=np.nan)
 
     if isinstance(x, da.core.Array):
-        conv_padding = int(win_size//2)
-        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0:np.nan, 1:np.nan})
+        conv_padding = int(win_size // 2)
+        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})
     else:
         res = pcon(x)
 
-    kernel_significant_elements = np.where(k>0, 1, 0)
+    kernel_significant_elements = np.where(k > 0, 1, 0)
     num_pix = np.sum(kernel_significant_elements)
 
     return res / num_pix
@@ -417,7 +421,7 @@ def window_sum(x, lag=1, win_size=5, win_geom="square", kernel=None):
     kernel : np.array, optional
         Custom kernel to use for convolution. If specified `geom` and `win_size`
         parameter will be ignored.
-    
+
     Returns
     -------
     array like
@@ -455,10 +459,9 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
     #if x.shape == (1, 1):
         #return x
 
-
     measure = getattr(np, stat)
 
-    pad = int(win_size//2)
+    pad = int(win_size // 2)
     data = np.pad(x, (pad, pad), mode="constant", constant_values=(np.nan))
 
     #sh = np.asarray(x).shape
@@ -593,7 +596,6 @@ def xr_wrapper(fun, *args, **kwargs):
         ##pass
         #input1 = arr1
         #input2 = arr2
-
 
     #input1 = np.asarray(input1)
     #rows, cols = input1.shape

@@ -6,4 +6,9 @@ exclude =
     dist,
     versioneer.py,
     doc/source/conf.py
+#E265 block comment should start with '# '
+#E116 unexpected indentation (comment)
+#E266 too many leading '#' for block comment
+ignore = E265,E116,E266
+
 max-line-length = 115

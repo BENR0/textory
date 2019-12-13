@@ -7,12 +7,13 @@ import dask.array as da
 from .util import (neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat,
                    window_sum, create_kernel, convolution, xr_wrapper)
 
+
 @xr_wrapper
 def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window variogram with specified
     lag for array.
-    
+
     Parameters
     ----------
     x : array like
@@ -23,7 +24,7 @@ def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Length of one side of window. Window will be of size window*window.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
-    
+
     Returns
     -------
     array like
@@ -44,7 +45,7 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
     """
     Calculate moveing window pseudo-variogram with specified
     lag for the two arrays.
-    
+
     Parameters
     ----------
     x, y : array like
@@ -55,7 +56,7 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
         Length of one side of window. Window will be of size window*window.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
-    
+
     Returns
     -------
     array like
@@ -77,7 +78,7 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window pseudo-variogram with specified
     lag for the two arrays.
-    
+
     Parameters
     ----------
     x, y : array like
@@ -88,7 +89,7 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
         Length of one side of window. Window will be of size window*window.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
-    
+
     Returns
     -------
     array like
@@ -110,7 +111,7 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window madogram with specified
     lag for array.
-    
+
     Parameters
     ----------
     x : array like
@@ -121,7 +122,7 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Length of one side of window. Window will be of size window*window.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
-    
+
     Returns
     -------
     array like
@@ -142,7 +143,7 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
     """
     Calculate moveing window rodogram with specified
     lag for array.
-    
+
     Parameters
     ----------
     x : array like
@@ -153,7 +154,7 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         Length of one side of window. Window will be of size window*window.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
-    
+
     Returns
     -------
     array like
@@ -173,7 +174,7 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
 def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
     """
     Calculate the specified statistic with a moveing window of size `win_size`.
-    
+
     Parameters
     ----------
     x : array like
@@ -182,7 +183,7 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
         Statistical measure to calculate.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
-    
+
     Returns
     -------
     array like
@@ -192,25 +193,27 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
     - checking if array dimensions are multiple of win_size. pad if not
     - make sure that each chunk is multiple of win_size in map_overlap
     """
-    if win_size%2 == 0:
+    if win_size % 2 == 0:
         raise("Window size must be odd.")
 
     #create view_as_windows function with reduced parameters for mapping
     pcon = functools.partial(_win_view_stat, win_size=win_size, stat=stat)
 
     if isinstance(x, da.core.Array):
-        conv_padding = int(win_size//2)
-        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})#, trim=False)
+        conv_padding = int(win_size // 2)
+        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})
+        #trim=False)
     else:
         res = pcon(x)
 
     return res
 
+
 @xr_wrapper
 def tpi(x, win_size=5, win_geom="square", **kwargs):
     """
     Calculate topographic position index for a given window size.
-    
+
     Parameters
     ----------
     x : array like
@@ -219,14 +222,14 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
         Length of one side of window. Window will be of size window*window.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
-    
+
     Returns
     -------
     array like
         Array with tpi
     """
     custom_kernel = create_kernel(n=win_size, geom=win_geom)
-    center_ind = win_size//2
+    center_ind = win_size // 2
     custom_kernel[center_ind, center_ind] = 0
 
     avg = convolution(x, kernel=custom_kernel)
@@ -262,7 +265,6 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
     #win = 2*lag + 1
     #radius = int(win/2)
 
-
     #r = list(range(win))
     #for x in r:
         #x_off = x - radius
@@ -278,5 +280,3 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
             #out += (band1 - band2[y_off:-y_off, x_off:-x_off])**2
 
     #return out
-
-
