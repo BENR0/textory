@@ -1,9 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 import numpy as np
-import functools
 import dask.array as da
-from scipy.ndimage.filters import convolve
 
 from .util import num_neighbours, neighbour_diff_squared, _dask_neighbour_diff_squared
 
