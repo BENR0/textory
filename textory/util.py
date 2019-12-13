@@ -69,14 +69,14 @@ def view(offset_y, offset_x, size_y, size_x, step=1):
     x = abs(offset_x)
     y = abs(offset_y)
 
-    x_in = slice(x , size_x, step) 
+    x_in = slice(x , size_x, step)
     x_out = slice(0, size_x - x, step)
 
     y_in = slice(y, size_y, step)
     y_out = slice(0, size_y - y, step)
 
-    # the swapping trick    
-    if offset_x < 0: x_in, x_out = x_out, x_in                                 
+    # the swapping trick
+    if offset_x < 0: x_in, x_out = x_out, x_in
     if offset_y < 0: y_in, y_out = y_out, y_in
 
     # return window view (in) and main view (out)
@@ -614,14 +614,14 @@ def xr_wrapper(fun, *args, **kwargs):
 
             ##view_in, view_out = view(y_off, x_off, rows, cols)
 
-            #x_in = slice(abs(x_off) , cols, 1) 
+            #x_in = slice(abs(x_off) , cols, 1)
             #x_out = slice(0, cols - abs(x_off), 1)
 
             #y_in = slice(abs(y_off), rows, 1)
             #y_out = slice(0, rows - abs(y_off), 1)
 
-            ## the swapping trick    
-            #if x_off < 0: x_in, x_out = x_out, x_in                                 
+            ## the swapping trick
+            #if x_off < 0: x_in, x_out = x_out, x_in
             #if y_off < 0: y_in, y_out = y_out, y_in
 
             ## return window view (in) and main view (out)
