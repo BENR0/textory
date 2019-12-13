@@ -65,20 +65,20 @@ def view(offset_y, offset_x, size_y, size_x, step=1):
     -----
     Source: https://landscapearchaeology.org/2018/numpy-loops/
     """
- 
+
     x = abs(offset_x)
     y = abs(offset_y)
- 
+
     x_in = slice(x , size_x, step) 
     x_out = slice(0, size_x - x, step)
- 
+
     y_in = slice(y, size_y, step)
     y_out = slice(0, size_y - y, step)
- 
+
     # the swapping trick    
     if offset_x < 0: x_in, x_out = x_out, x_in                                 
     if offset_y < 0: y_in, y_out = y_out, y_in
- 
+
     # return window view (in) and main view (out)
     return np.s_[y_in, x_in], np.s_[y_out, x_out]
 
@@ -98,7 +98,7 @@ def num_neighbours(lag=1):
     """
     win_size = 2*lag + 1
     neighbours = win_size**2 - (2*(lag-1) + 1)**2
-    
+
     return neighbours
 
 def neighbour_count(shape, kernel):
@@ -177,7 +177,7 @@ def create_kernel(n=5, geom="square", kernel=None):
             k = circle.astype(np.int)
     else:
         k = kernel
-    
+
     return k
 
 
@@ -289,11 +289,11 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
     win = 2*lag + 1
     radius = win // 2
     rows, cols = arr1.shape
-    
-    
+
+
     if arr2 is None:
         arr2 = arr1.copy()
-    
+
     out_arr = np.zeros_like(arr1)
 
     r = list(range(win))
@@ -304,7 +304,7 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
             x_r = r
         else:
             x_r = [max(r), min(r)]
-        
+
         for x in x_r:
             x_off = x - radius
             view_in, view_out = view(y_off, x_off, rows, cols)
@@ -317,7 +317,7 @@ def neighbour_diff_squared(arr1, arr2=None, lag=1, func="nd_variogram"):
             #a1 = arr1[view_out]
             #a2 = arr2[view_in]
             #out_arr[view_out] += (a1 - a2)**2
-            
+
     return out_arr
 
 
@@ -341,17 +341,17 @@ def _dask_neighbour_diff_squared(x, y=None, lag=1, func="nd_variogram"):
         Difference part of variogram calculations
     """
     pvario = functools.partial(neighbour_diff_squared, lag=lag, func=func)
-    
+
     if y is None:
         x = da.overlap.overlap(x, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
         y = x
     else:
         x = da.overlap.overlap(x, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
         y = da.overlap.overlap(y, depth={0: lag, 1: lag}, boundary={0: "reflect", 1: "reflect"})
-    
+
     res = da.map_blocks(pvario, x, y)
     res = da.overlap.trim_internal(res, {0: lag, 1: lag})
-    
+
     return res
 
 
@@ -386,16 +386,16 @@ def convolution(x, win_size=5, win_geom="square", kernel=None, **kwargs):
 
     #create convolve function with reduced parameters for map_overlap
     pcon = functools.partial(convolve, weights=k, mode="constant", cval=np.nan)
-    
+
     if isinstance(x, da.core.Array):
         conv_padding = int(win_size//2)
         res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0:np.nan, 1:np.nan})
     else:
         res = pcon(x)
-    
+
     kernel_significant_elements = np.where(k>0, 1, 0)
     num_pix = np.sum(kernel_significant_elements)
-    
+
     return res / num_pix
 
 
@@ -428,7 +428,7 @@ def window_sum(x, lag=1, win_size=5, win_geom="square", kernel=None):
 
     #calculate 1/2N part of variogram
     neighbours = num_neighbours(lag)
-    
+
     factor = 2 * neighbours
 
     return res / factor
@@ -503,7 +503,7 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
                 #out = fun(args[0], args[1], **kwargs)
             #else:
                 #out = fun(args[0], **kwargs)
-        
+
         #return out
     #return wrapped_fun
 
@@ -546,7 +546,7 @@ def xr_wrapper(fun, *args, **kwargs):
             out = fun(args[0], **params)
         else:
             out = fun(args[0], **params)
-    
+
     return out
 
 
@@ -556,27 +556,27 @@ def xr_wrapper(fun, *args, **kwargs):
 #def neighbour_diff_squared1(arr1, arr2=None, lag=1):
     #"""
     #Calculates the (pseudo-) variogram between two arrays.
-    
+
     #If only one array is supplied variogram is calculated
     #for itself (same array is used as the second array).
-    
+
     #Parameters
     #----------
     #arr1 : np.array
     #arr2 : np.array, optional
     #lag : int, optional
         #The lag distance for the variogram, defaults to 1.
-    
+
     #Returns
     #-------
     #np.array
         #Variogram
-    
+
     #"""
     #twoband = False
     #win = 2*lag + 1
     #radius = int(win/2)
-    
+
     ##if arr2 is None:
     ##    arr2 = arr1.copy()
     #inshape0 = arr1.shape[0]
@@ -593,13 +593,13 @@ def xr_wrapper(fun, *args, **kwargs):
         ##pass
         #input1 = arr1
         #input2 = arr2
-    
-    
+
+
     #input1 = np.asarray(input1)
     #rows, cols = input1.shape
-    
+
     #out_arr = np.zeros(input1.shape, dtype=input1.dtype.name)
-    
+
     #r = list(range(win))
     #for x in r:
         #x_off = x - radius
@@ -608,12 +608,12 @@ def xr_wrapper(fun, *args, **kwargs):
             #y_r = r
         #else:
             #y_r = [max(r), min(r)]
-        
+
         #for y in y_r:
             #y_off = y - radius
-            
+
             ##view_in, view_out = view(y_off, x_off, rows, cols)
-             
+
             #x_in = slice(abs(x_off) , cols, 1) 
             #x_out = slice(0, cols - abs(x_off), 1)
 
@@ -627,7 +627,7 @@ def xr_wrapper(fun, *args, **kwargs):
             ## return window view (in) and main view (out)
             ##return np.s_[y_in, x_in], np.s_[y_out, x_out]
             #out_arr[y_out, x_out] += (input1[y_out, x_out] - input2[y_in, x_in])**2
-   
+
     #if twoband:
         #arr1[0,:,:] = out_arr
         #return arr1

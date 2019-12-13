@@ -35,7 +35,7 @@ def variogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         diff = neighbour_diff_squared(x, lag=lag, func="nd_variogram")
 
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
-    
+
     return res
 
 
@@ -66,9 +66,9 @@ def pseudo_cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs)
         diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_variogram")
     else:
         diff = neighbour_diff_squared(x, y, lag, func="nd_variogram")
-    
+
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
-    
+
     return res
 
 
@@ -99,9 +99,9 @@ def cross_variogram(x, y, lag=1, win_size=5, win_geom="square", **kwargs):
         diff = _dask_neighbour_diff_squared(x, y, lag, func="nd_cross_variogram")
     else:
         diff = neighbour_diff_squared(x, y, lag, func="nd_cross_variogram")
-    
+
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
-    
+
     return res
 
 
@@ -131,9 +131,9 @@ def madogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_madogram")
     else:
         diff = neighbour_diff_squared(x, lag=lag, func="nd_madogram")
-    
+
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
-    
+
     return res
 
 
@@ -163,9 +163,9 @@ def rodogram(x, lag=1, win_size=5, win_geom="square", **kwargs):
         diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_rodogram")
     else:
         diff = neighbour_diff_squared(x, lag=lag, func="nd_rodogram")
-    
+
     res = window_sum(diff, lag=lag, win_size=win_size, win_geom=win_geom)
-    
+
     return res
 
 
@@ -197,7 +197,7 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
 
     #create view_as_windows function with reduced parameters for mapping
     pcon = functools.partial(_win_view_stat, win_size=win_size, stat=stat)
-    
+
     if isinstance(x, da.core.Array):
         conv_padding = int(win_size//2)
         res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})#, trim=False)
@@ -228,17 +228,17 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
     custom_kernel = create_kernel(n=win_size, geom=win_geom)
     center_ind = win_size//2
     custom_kernel[center_ind, center_ind] = 0
-    
+
     avg = convolution(x, kernel=custom_kernel)
     res = avg - x
-    
+
     return res
 
 #def variogram_diff_old(band1, band2, lag=None, window=None):
     #band2 = np.pad(band2, ((1,1),(1,1)), mode="edge")
-    
+
     #out = np.zeros(band1.shape, dtype=band1.dtype.name)
-    
+
     ##left and right neighbour
     #out = (band1 - band2[1:-1,2::])**2
     #out += (band1 - band2[1:-1,0:-2:])**2
@@ -251,18 +251,18 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
     ##right diagonal neigbours
     #out += (band1 -band2[0:-2,2::])**2
     #out += (band1 - band2[2::,2::])**2
-    
+
     #return out
 
 #def variogram_diff_loop(band1, band2, lag=1, window=None):
     #band2 = np.pad(band2, ((lag,lag),(lag,lag)), mode="edge")
-    
+
     #out = np.zeros(band1.shape, dtype=band1.dtype.name)
 
     #win = 2*lag + 1
     #radius = int(win/2)
-    
-    
+
+
     #r = list(range(win))
     #for x in r:
         #x_off = x - radius
@@ -271,12 +271,12 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
             #y_r = r
         #else:
             #y_r = [max(r), min(r)]
-        
+
         #for y in y_r:
             #y_off = y - radius
 
             #out += (band1 - band2[y_off:-y_off, x_off:-x_off])**2
-    
+
     #return out
 
 
