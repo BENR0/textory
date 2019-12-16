@@ -538,6 +538,8 @@ def xr_wrapper(fun, *args, **kwargs):
         if fun.__name__ == "window_statistic":
             out.attrs["statistic"] = params.get("stat")
             out.name = out.attrs["name"] + "_{stat}_{win_size}".format(**params)
+        elif fun.__name__ == "tpi":
+            out.name = out.attrs["name"] + "_{win_size}".format(**params)
         else:
             out.attrs["lag_distance"] = params.get("lag")
             out.attrs["window_geometry"] = params.get("win_geom")
