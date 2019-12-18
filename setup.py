@@ -18,7 +18,7 @@ setuptools.setup(
                       "dask",
                       "distributed",
                       "satpy"],
-    setup_requires=["setuptools.scm"],
+    setup_requires=["setuptools_scm"],
     use_scm_version=True,
     classifiers=(
         "Programming Language :: Python :: 3.7",
