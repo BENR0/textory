@@ -29,4 +29,4 @@ for example:
       - dask
       - distributed
       - pip:
-        - "git+https://github.com/BENR0/textory.git@master#egg=textory
+        - "git+https://github.com/BENR0/textory.git@master#egg=textory"
