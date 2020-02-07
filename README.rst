@@ -1,8 +1,13 @@
 Textory
 =======
-With Textory local (windowed) textures can be calculated for images (array like structures).
-It has conveniant wrappers to be used with xarray or Satpy scenes.
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3653939.svg
+   :target: https://doi.org/10.5281/zenodo.3653939
+
+Textory is a python library for the calculation of windowed statistics of arrays.
+It can calculate windowed variograms, pseudo-cross variograms and standard statistics like
+mean, std, min, max, etc. for rectangular and round windows.
+It can also be used conveniently with xarrays and Satpy scenes.
 
 Documentation is available at https://textory.readthedocs.io.
 
@@ -16,15 +21,4 @@ textory directory:
 .. code-block:: bash
 
     pip install .
-
-
-Todo
-----
-Implement:
-
-- Local Binary patterns (also between two images)
-  - https://www.pyimagesearch.com/2015/12/07/local-binary-patterns-with-python-opencv/
-- other textures?
-
-
 
