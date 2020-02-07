@@ -1,6 +1,15 @@
 Textory
 =======
 
+.. image:: https://travis-ci.org/BENR0/textory.svg?branch=master
+    :target: https://travis-ci.org/BENR0/textory
+
+.. image:: https://badge.fury.io/py/textory.svg
+    :target: https://badge.fury.io/py/textory
+
+.. image:: https://codecov.io/gh/BENR0/textory/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/BENR0/textory
+
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3653939.svg
    :target: https://doi.org/10.5281/zenodo.3653939
 

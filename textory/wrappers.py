@@ -42,7 +42,6 @@ The :func:`~textory.wrappers.textures_for_xr_dataset` function works similarly t
 as input and also returns a :class:`xarray.Dataset`.
 """
 import textory.textures as txt
-from satpy import Scene
 
 
 def textures_for_scene(scn, textures, append=True):

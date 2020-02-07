@@ -1,0 +1,21 @@
+language: python
+python:
+  - 3.7
+
+before_install:
+  - pip install codecov
+
+install:
+  - pip install ".[test]"
+
+script:
+  - coverage run --source=textory -m pytest
+
+after_success:
+  - codecov
+
+notifications:
+  slack:
+    secure: iekdJgN8RHeYXPGivQVINaBXi4nDk3lVSGzLhA5tphRhRcF/JOjrz3JJiR6uPIWVsnqWnQMUbrAWw8FklH2Zk+uXBgxuZ+mCSSlHFdOKxAB7UZS7slsL1dtURck1N9I/73W8A263mtOz1oEla/zL/TP6s+DdwnxKM13ocglGA3pZEtaFxXRDtcajBYBWmMpoc00cInQSmZWMTX0jdRT+VVLBvWkDIvw8TwEtLxIW2C88eAWZYONY7u+VEXJpZG9QQ2xQMG4ddsHApvYpupRogF1W+HHiq/2tSSj6gCjjfW4Ao4vBGOdm+sH1u3ihEGd7KYXjYKFF4eLmPFXoviaWUjnuF6NsIy26zjFET50AqlF7u88es4TvsW9R+rfotvg1lwRbZo++OBXv9VAcdpe8fZevid77+8SLO5WBthjBuWqx6rKzk1TnJVQsYfQ7hOFxH6ZJE7m7paGHgfpgH2aQuVkicSCU39FrWiAVGmF0aQvFv2LWP/ozdNVJsC/e7s4+SxMybKMEStDm/DYOlpewFIHPTEYJaZLiEGROKpl314P5bqVgiTlQb2T8JcZjry/bg2R3IYD6HKvh6d59A7D5Cp8AP7jkOhW3WSr/bbJi43okYuVHmucKqO9QmZadG+Gdi9Pz61I2JkzqbygP37r9rs3AhEqXy6XsGRar8q4s7z0=
+  on_success: never
+  on_failure: always
