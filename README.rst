@@ -15,10 +15,9 @@ Documentation is available at https://textory.readthedocs.io.
 Installation
 ------------
 
-Textory can be installed with pip after cloning this repository and cd'ing into the 
-textory directory:
+Textory can be installed from PyPI with pip: 
 
 .. code-block:: bash
 
-    pip install .
+    pip install textory
 

@@ -5,12 +5,11 @@ Installation Instructions
 Pip-based Installation
 ======================
 
-Textory is currently only available via github but can be installed
-with pip:
+Textory can be installed from PyPi with pip:
 
 .. code-block:: bash
 
-    $ pip install git+https://github.com/BENR0/textory.git@master#egg=textory
+    $ pip install textory 
 
 Conda-based Installation
 ========================
@@ -29,4 +28,14 @@ for example:
       - dask
       - distributed
       - pip:
-        - "git+https://github.com/BENR0/textory.git@master#egg=textory"
+        - textory
+
+Latest version
+==============
+
+Currently releases on PyPi might be infrequent. If you want to install the latest version
+from the github repository use:
+
+.. code-block:: bash
+
+    $ pip install git+https://github.com/BENR0/textory.git@master#egg=textory 
