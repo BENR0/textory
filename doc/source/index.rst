@@ -7,6 +7,9 @@
 Textory's documentation
 ===================================
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3653939.svg
+   :target: https://doi.org/10.5281/zenodo.3653939
+
 Textory is a python library for the calculation of windowed statistics of arrays.
 It can calculate windowed variograms, pseudo-cross variograms and standard statistics
 like mean, std, min, max, etc. for rectangular and round windows.
