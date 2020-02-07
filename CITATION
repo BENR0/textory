@@ -4,6 +4,6 @@ To reference this software use:
   author = {Benjamin Rösner},
   title = {textory: Version 0.1.0b},
   year = 2019,
-  version = {v.0.1.0b},
+  version = {v.0.2.0b},
   url = {https://github.com/BENR0/textory}
 }
