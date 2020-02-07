@@ -389,11 +389,11 @@ def convolution(x, win_size=5, win_geom="square", kernel=None, **kwargs):
         k = create_kernel(n=win_size, geom=win_geom)
 
     #create convolve function with reduced parameters for map_overlap
-    pcon = functools.partial(convolve, weights=k, mode="constant", cval=np.nan)
+    pcon = functools.partial(convolve, weights=k, mode="constant", cval=0.0)
 
     if isinstance(x, da.core.Array):
         conv_padding = int(win_size // 2)
-        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: np.nan, 1: np.nan})
+        res = x.map_overlap(pcon, depth={0: conv_padding, 1: conv_padding}, boundary={0: 0.0, 1: 0.0})
     else:
         res = pcon(x)
 
