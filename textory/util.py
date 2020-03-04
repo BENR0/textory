@@ -241,7 +241,7 @@ def nd_rodogram(x, y, *args):
     np.array
 
     """
-    res = np.sqr(np.abs(x - y))
+    res = np.sqrt(np.abs(x - y))
 
     return res
 
