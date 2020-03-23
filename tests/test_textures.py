@@ -3,7 +3,7 @@
 
 import pytest
 import numpy as np
-from textory.textures import variogram, rodogram, madogram, pseudo_cross_variogram, tpi
+from textory.textures import variogram, rodogram, madogram, pseudo_cross_variogram, window_statistic, tpi
 from textory.util import neighbour_diff_squared, num_neighbours
 
 @pytest.fixture
@@ -122,7 +122,7 @@ def test_variogram_default_values_center(init_np_arrays):
     res = res / (2 * num_neighbours * win_size**2)
 
     check_pixel_index = 25
-    assert variogram(a, lag=1, win_size=5, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+    assert variogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
 
 
 def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
@@ -154,7 +154,7 @@ def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
     res = res / (2 * num_neighbours * win_size**2)
 
     check_pixel_index = 25
-    assert pseudo_cross_variogram(a, b, lag=1, win_size=5, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+    assert pseudo_cross_variogram(a, b, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
 
 
 def test_madogram_default_values_center(init_np_arrays):
@@ -186,7 +186,7 @@ def test_madogram_default_values_center(init_np_arrays):
     res = res / (2 * num_neighbours * win_size**2)
 
     check_pixel_index = 25
-    assert np.allclose(madogram(a, lag=1, win_size=5, win_geom="square")[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
+    assert np.allclose(madogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
 
 
 def test_rodogram_default_values_center(init_np_arrays):
@@ -218,4 +218,17 @@ def test_rodogram_default_values_center(init_np_arrays):
     res = res / (2 * num_neighbours * win_size**2)
 
     check_pixel_index = 25
-    assert rodogram(a, lag=1, win_size=5, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+    assert rodogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+
+
+def test_window_statistic_std(init_np_arrays):
+    """Tests the window statistic for standard deviation."""
+    a, _ = init_np_arrays
+
+    rows, cols = a.shape
+
+    win_size = 5
+    res = calc_for_window(a, func="nanstd", win_size=win_size)
+                        
+    check_pixel_index = 25
+    assert np.allclose(window_statistic(a, stat="nanstd", win_size=win_size)[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
