@@ -19,6 +19,50 @@ def init_np_arrays():
     return a1.astype(np.float32), a2.astype(np.float32)
 
 
+def calc_for_window(a, func="sum", win_size=5):
+    """Calculate function for window.
+
+    Parameters
+    ----------
+    a : np.array
+    func : function
+        Function to calculate for window.
+    win_size : int
+        Window size
+
+    Returns
+    -------
+    np.array
+
+    """
+    measure = getattr(np, func)
+    res = np.zeros_like(a)
+    rows, cols = a.shape
+    win_offset = int(win_size // 2)
+    for i in range(0, cols):
+        for j in range(0, rows):
+            ipos_start = i - win_offset
+            ipos_end = i + win_offset + 1
+            if (ipos_start < 0):
+                ipos_start = 0
+            if (ipos_end >= cols):
+                ipos_end = cols
+
+            jpos_start = j - win_offset
+            jpos_end = j + win_offset + 1
+            if (jpos_start < 0):
+                jpos_start = 0
+            elif (jpos_end >= rows):
+                jpos_end = rows
+
+            i_slice = slice(ipos_start, ipos_end)
+            j_slice = slice(jpos_start, jpos_end)
+
+            res[i, j] = measure(a[i_slice, j_slice])
+
+    return res
+
+
 def test_num_neighbours():
     assert num_neighbours(lag=1) == 8
     assert num_neighbours(lag=2) == 16
@@ -70,30 +114,8 @@ def test_variogram_default_values_center(init_np_arrays):
                     else:
                         tmp[i,j] += np.square((a[i, j] - a[i+l, j+k]))
 
-
-    #calculate sum for window
     win_size = 5
-    win_offset = int(win_size // 2)
-    for i in range(0, cols):
-        for j in range(0, rows):
-            ipos_start = i - win_offset
-            ipos_end = i + win_offset + 1
-            if (ipos_start < 0):
-                ipos_start = 0
-            if (ipos_end >= cols):
-                ipos_end = cols
-
-            jpos_start = j - win_offset
-            jpos_end = j + win_offset + 1
-            if (jpos_start < 0):
-                jpos_start = 0
-            elif (jpos_end >= rows):
-                jpos_end = rows
-
-            i_slice = slice(ipos_start, ipos_end)
-            j_slice = slice(jpos_start, jpos_end)
-
-            res[i, j] = np.sum(tmp[i_slice, j_slice])
+    res = calc_for_window(tmp, win_size=win_size)
                         
     #normalize by number of neighbours
     num_neighbours = 8 #lag=1 case
@@ -124,30 +146,8 @@ def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
                     else:
                         tmp[i,j] += np.square((a[i, j] - b[i+l, j+k]))
 
-
-    #calculate sum for window
     win_size = 5
-    win_offset = int(win_size // 2)
-    for i in range(0, cols):
-        for j in range(0, rows):
-            ipos_start = i - win_offset
-            ipos_end = i + win_offset + 1
-            if (ipos_start < 0):
-                ipos_start = 0
-            if (ipos_end >= cols):
-                ipos_end = cols
-
-            jpos_start = j - win_offset
-            jpos_end = j + win_offset + 1
-            if (jpos_start < 0):
-                jpos_start = 0
-            elif (jpos_end >= rows):
-                jpos_end = rows
-
-            i_slice = slice(ipos_start, ipos_end)
-            j_slice = slice(jpos_start, jpos_end)
-
-            res[i, j] = np.sum(tmp[i_slice, j_slice])
+    res = calc_for_window(tmp, win_size=win_size)
                         
     #normalize by number of neighbours
     num_neighbours = 8 #lag=1 case
@@ -178,30 +178,8 @@ def test_madogram_default_values_center(init_np_arrays):
                     else:
                         tmp[i,j] += np.abs((a[i, j] - a[i+l, j+k]))
 
-
-    #calculate sum for window
     win_size = 5
-    win_offset = int(win_size // 2)
-    for i in range(0, cols):
-        for j in range(0, rows):
-            ipos_start = i - win_offset
-            ipos_end = i + win_offset + 1
-            if (ipos_start < 0):
-                ipos_start = 0
-            if (ipos_end >= cols):
-                ipos_end = cols
-
-            jpos_start = j - win_offset
-            jpos_end = j + win_offset + 1
-            if (jpos_start < 0):
-                jpos_start = 0
-            elif (jpos_end >= rows):
-                jpos_end = rows
-
-            i_slice = slice(ipos_start, ipos_end)
-            j_slice = slice(jpos_start, jpos_end)
-
-            res[i, j] = np.sum(tmp[i_slice, j_slice])
+    res = calc_for_window(tmp, win_size=win_size)
                         
     #normalize by number of neighbours
     num_neighbours = 8 #lag=1 case
@@ -232,30 +210,8 @@ def test_rodogram_default_values_center(init_np_arrays):
                     else:
                         tmp[i,j] += np.sqrt(np.abs((a[i, j] - a[i+l, j+k])))
 
-
-    #calculate sum for window
     win_size = 5
-    win_offset = int(win_size // 2)
-    for i in range(0, cols):
-        for j in range(0, rows):
-            ipos_start = i - win_offset
-            ipos_end = i + win_offset + 1
-            if (ipos_start < 0):
-                ipos_start = 0
-            if (ipos_end >= cols):
-                ipos_end = cols
-
-            jpos_start = j - win_offset
-            jpos_end = j + win_offset + 1
-            if (jpos_start < 0):
-                jpos_start = 0
-            elif (jpos_end >= rows):
-                jpos_end = rows
-
-            i_slice = slice(ipos_start, ipos_end)
-            j_slice = slice(jpos_start, jpos_end)
-
-            res[i, j] = np.sum(tmp[i_slice, j_slice])
+    res = calc_for_window(tmp, win_size=win_size)
                         
     #normalize by number of neighbours
     num_neighbours = 8 #lag=1 case
