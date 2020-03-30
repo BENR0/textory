@@ -1,11 +1,13 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-import numpy as np
 import functools
-import dask.array as da
 
-from .util import (neighbour_diff_squared, _dask_neighbour_diff_squared, _win_view_stat,
-                   window_sum, create_kernel, convolution, xr_wrapper)
+import dask.array as da
+import numpy as np
+
+from .util import (_dask_neighbour_diff_squared, _win_view_stat, convolution,
+                   create_kernel, neighbour_diff_squared, window_sum,
+                   xr_wrapper)
 
 
 @xr_wrapper
