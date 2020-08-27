@@ -44,6 +44,6 @@ functions should be used. Currently this function only supports square windows.
 
 .. code-block:: python
 
-   tx.textures.window_statistic(x=data1, func="nanmax")
+   tx.textures.window_statistic(x=data1, stat="nanmax")
 
 
