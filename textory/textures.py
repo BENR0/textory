@@ -185,6 +185,8 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
         Statistical measure to calculate.
     win_size : int, optional
         Length of one side of window. Window will be of size window*window.
+    kwargs : optional
+        Any parameters a certain stat may need other than the array itself.
 
     Returns
     -------
@@ -199,7 +201,7 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
         raise("Window size must be odd.")
 
     #create view_as_windows function with reduced parameters for mapping
-    pcon = functools.partial(_win_view_stat, win_size=win_size, stat=stat)
+    pcon = functools.partial(_win_view_stat, win_size=win_size, stat=stat, **kwargs)
 
     if isinstance(x, da.core.Array):
         conv_padding = int(win_size // 2)

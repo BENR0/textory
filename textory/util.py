@@ -438,7 +438,7 @@ def window_sum(x, lag=1, win_size=5, win_geom="square", kernel=None):
     return res / factor
 
 
-def _win_view_stat(x, win_size=5, stat="nanmean"):
+def _win_view_stat(x, win_size=5, stat="nanmean", **kwargs):
     """
     Calculates specified basic statistical measure for a moveing window
     over an array.
@@ -450,6 +450,8 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
         Window size, defaults to 5.
     stat : {"nanmean", "nanmax", "nanmin", "nanmedian", "nanstd"}
         Statistical measure to calculate.
+    kwargs : optional
+        Additional keyword arguments some stat may need.
 
     Returns
     -------
@@ -459,7 +461,9 @@ def _win_view_stat(x, win_size=5, stat="nanmean"):
     #if x.shape == (1, 1):
         #return x
 
-    measure = getattr(np, stat)
+    np_measure = getattr(np, stat)
+
+    measure = functools.partial(np_measure, **kwargs) 
 
     pad = int(win_size // 2)
     data = np.pad(x, (pad, pad), mode="constant", constant_values=(np.nan))
