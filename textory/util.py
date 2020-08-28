@@ -552,9 +552,9 @@ def xr_wrapper(fun, *args, **kwargs):
         out.attrs["window_size"] = params.get("win_size")
     else:
         if "y" in params.keys():
-            out = fun(args[0], **params)
+            out = fun(args[0], **params, **kwargs)
         else:
-            out = fun(args[0], **params)
+            out = fun(args[0], **params, **kwargs)
 
     return out
 
