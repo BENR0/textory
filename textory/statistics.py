@@ -61,9 +61,9 @@ def pseudo_cross_variogram(x, y, lag=1):
         Pseudo-variogram between the two arrays
     """
     if isinstance(x, da.core.Array):
-        diff = _dask_neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+        diff = _dask_neighbour_diff_squared(x, y, lag=lag, func="nd_variogram")
     else:
-        diff = neighbour_diff_squared(x, lag=lag, func="nd_variogram")
+        diff = neighbour_diff_squared(x, y, lag=lag, func="nd_variogram")
 
     res = np.nansum(diff)
 
