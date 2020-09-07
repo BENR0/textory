@@ -4,7 +4,6 @@
 import pytest
 import numpy as np
 from textory.textures import variogram, rodogram, madogram, pseudo_cross_variogram, window_statistic, tpi
-from textory.util import neighbour_diff_squared, num_neighbours
 
 @pytest.fixture
 def init_np_arrays():
@@ -61,35 +60,6 @@ def calc_for_window(a, func="sum", win_size=5):
             res[i, j] = measure(a[i_slice, j_slice])
 
     return res
-
-
-def test_num_neighbours():
-    assert num_neighbours(lag=1) == 8
-    assert num_neighbours(lag=2) == 16
-
-
-def test_neighbour_diff_squared(init_np_arrays):
-
-    a, _ = init_np_arrays
-
-    tmp = np.zeros_like(a)
-    lag = 1
-    lags =  range(-lag, lag + 1)
-
-    rows, cols = a.shape
-
-    #calculate variogram difference
-    for i in range(0, cols):
-        for j in range(0, rows):
-            for l in lags:
-                for k in lags:
-                    if (i+l < 0) | (i+l >= cols) | (j+k < 0) | (j+k >= rows) | ((l == 0) & (k == 0)):
-                        continue
-                    else:
-                        tmp[i,j] += np.square((a[i, j] - a[i+l, j+k]))
-
-    assert np.allclose(neighbour_diff_squared(a, arr2=None, lag=1, func="nd_variogram"), tmp)
-    #assert neighbour_diff_squared(a, arr2=None, lag=1, func="nd_variogram")[24, 24] == tmp[24,24]
 
 
 
