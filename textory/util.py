@@ -176,7 +176,7 @@ def create_kernel(n=5, geom="square", kernel=None):
             xind, yind = np.indices((n, n))
             c = n // 2
             center = (c, c)
-            radius = c / 2
+            radius = n / 2
 
             circle = (xind - center[0])**2 + (yind - center[1])**2 < radius**2
             k = circle.astype(np.int)
