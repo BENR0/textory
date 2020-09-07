@@ -97,6 +97,10 @@ def test_create_kernel_custom():
 
     
 def test_neighbour_diff_squared(init_np_arrays):
+    """
+    Todo:
+        - add case for NaN's in array
+    """
 
     a, _ = init_np_arrays
 
