@@ -169,7 +169,11 @@ def create_kernel(n=5, geom="square", kernel=None):
     -------
     np.array
     """
+
     if kernel is None:
+        if n % 2 == 0:
+            raise("Window size must be odd.")
+
         if geom == "square":
             k = np.ones((n, n))
         elif geom == "round":
@@ -181,6 +185,13 @@ def create_kernel(n=5, geom="square", kernel=None):
             circle = (xind - center[0])**2 + (yind - center[1])**2 < radius**2
             k = circle.astype(np.int)
     else:
+        c, r = kernel.shape
+        if c != r:
+            raise("Kernel needs to be the same size in each dimension.")
+
+        if c % 2 == 0:
+            raise("Window size must be odd.")
+
         k = kernel
 
     return k
