@@ -395,7 +395,7 @@ def convolution(x, win_size=5, win_geom="square", kernel=None, **kwargs):
 
     """
     if kernel is not None:
-        k = kernel
+        k = create_kernel(kernel=kernel)
     else:
         k = create_kernel(n=win_size, geom=win_geom)
 
