@@ -223,7 +223,7 @@ def tpi(x, win_size=5, win_geom="square", **kwargs):
     x : array like
         Input array
     win_size : int, optional
-        Length of one side of window. Window will be of size window*window.
+        Length of one side of window. Window will be of size window*window. Defaults to 5.
     win_geom : {"square", "round"}
         Geometry of the kernel. Defaults to square.
 
