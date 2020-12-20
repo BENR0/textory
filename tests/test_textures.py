@@ -3,6 +3,7 @@
 
 import pytest
 import numpy as np
+import decorator
 from textory.textures import variogram, rodogram, madogram, pseudo_cross_variogram, window_statistic, tpi
 
 @pytest.fixture
@@ -62,10 +63,9 @@ def calc_for_window(a, func="sum", win_size=5):
     return res
 
 
-
-def test_variogram_default_values_center(init_np_arrays):
-    """Tests the center value of variogram with default parameters."""
-    a, _ = init_np_arrays
+@decorator.decorator
+def loop_calc_wrapper(func, *args, **kwargs):
+    a, b= args
 
     res = np.zeros_like(a)
     tmp = np.zeros_like(a)
@@ -82,14 +82,28 @@ def test_variogram_default_values_center(init_np_arrays):
                     if (i+l < 0) | (i+l >= cols) | (j+k < 0) | (j+k >= rows) | ((l == 0) & (k == 0)):
                         continue
                     else:
-                        tmp[i,j] += np.square((a[i, j] - a[i+l, j+k]))
+                        #tmp[i,j] += np.square((a[i, j] - a[i+l, j+k]))
+                        tmp[i,j] += func(a[i, j], b[i+l, j+k])
 
-    win_size = 5
+    win_size = kwargs["win_size"]
     res = calc_for_window(tmp, win_size=win_size)
                         
     #normalize by number of neighbours
     num_neighbours = 8 #lag=1 case
     res = res / (2 * num_neighbours * win_size**2)
+    return res
+
+
+def test_variogram_default_values_center(init_np_arrays):
+    """Tests the center value of variogram with default parameters."""
+    a, _ = init_np_arrays
+    win_size = 5
+
+    @loop_calc_wrapper
+    def vario_func(a, b, **kwargs):
+        return np.square((a - b))
+
+    res = vario_func(a, a, win_size=win_size)
 
     check_pixel_index = 25
     assert variogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
@@ -98,30 +112,13 @@ def test_variogram_default_values_center(init_np_arrays):
 def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
     """Tests the center value of variogram with default parameters."""
     a, b = init_np_arrays
-
-    res = np.zeros_like(a)
-    tmp = np.zeros_like(a)
-    lag = 1
-    lags =  range(-lag, lag + 1)
-
-    rows, cols = a.shape
-
-    #calculate variogram difference
-    for i in range(0, cols):
-        for j in range(0, rows):
-            for l in lags:
-                for k in lags:
-                    if (i+l < 0) | (i+l >= cols) | (j+k < 0) | (j+k >= rows) | ((l == 0) & (k == 0)):
-                        continue
-                    else:
-                        tmp[i,j] += np.square((a[i, j] - b[i+l, j+k]))
-
     win_size = 5
-    res = calc_for_window(tmp, win_size=win_size)
-                        
-    #normalize by number of neighbours
-    num_neighbours = 8 #lag=1 case
-    res = res / (2 * num_neighbours * win_size**2)
+
+    @loop_calc_wrapper
+    def vario_func(a, b, **kwargs):
+        return np.square((a - b))
+
+    res = vario_func(a, b, win_size=win_size)
 
     check_pixel_index = 25
     assert pseudo_cross_variogram(a, b, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
@@ -130,30 +127,13 @@ def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
 def test_madogram_default_values_center(init_np_arrays):
     """Tests the center value of rodogram with default parameters."""
     a, _ = init_np_arrays
-
-    res = np.zeros_like(a)
-    tmp = np.zeros_like(a)
-    lag = 1
-    lags =  range(-lag, lag + 1)
-
-    rows, cols = a.shape
-
-    #calculate variogram difference
-    for i in range(0, cols):
-        for j in range(0, rows):
-            for l in lags:
-                for k in lags:
-                    if (i+l < 0) | (i+l >= cols) | (j+k < 0) | (j+k >= rows) | ((l == 0) & (k == 0)):
-                        continue
-                    else:
-                        tmp[i,j] += np.abs((a[i, j] - a[i+l, j+k]))
-
     win_size = 5
-    res = calc_for_window(tmp, win_size=win_size)
-                        
-    #normalize by number of neighbours
-    num_neighbours = 8 #lag=1 case
-    res = res / (2 * num_neighbours * win_size**2)
+
+    @loop_calc_wrapper
+    def vario_func(a, b, **kwargs):
+        return np.abs((a - b))
+
+    res = vario_func(a, a, win_size=win_size)
 
     check_pixel_index = 25
     assert np.allclose(madogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
@@ -162,30 +142,13 @@ def test_madogram_default_values_center(init_np_arrays):
 def test_rodogram_default_values_center(init_np_arrays):
     """Tests the center value of rodogram with default parameters."""
     a, _ = init_np_arrays
-
-    res = np.zeros_like(a)
-    tmp = np.zeros_like(a)
-    lag = 1
-    lags =  range(-lag, lag + 1)
-
-    rows, cols = a.shape
-
-    #calculate variogram difference
-    for i in range(0, cols):
-        for j in range(0, rows):
-            for l in lags:
-                for k in lags:
-                    if (i+l < 0) | (i+l >= cols) | (j+k < 0) | (j+k >= rows) | ((l == 0) & (k == 0)):
-                        continue
-                    else:
-                        tmp[i,j] += np.sqrt(np.abs((a[i, j] - a[i+l, j+k])))
-
     win_size = 5
-    res = calc_for_window(tmp, win_size=win_size)
-                        
-    #normalize by number of neighbours
-    num_neighbours = 8 #lag=1 case
-    res = res / (2 * num_neighbours * win_size**2)
+
+    @loop_calc_wrapper
+    def vario_func(a, b, **kwargs):
+        return np.sqrt(np.abs((a - b)))
+
+    res = vario_func(a, a, win_size=win_size)
 
     check_pixel_index = 25
     assert rodogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
