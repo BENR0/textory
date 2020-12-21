@@ -167,3 +167,14 @@ def test_window_statistic_std(init_np_arrays):
                         
     check_pixel_index = 25
     assert np.allclose(window_statistic(a, stat="nanstd", win_size=win_size)[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
+
+
+def test_tpi_default_values_center(init_np_arrays):
+    a, _ = init_np_arrays
+    tmp = a[23:28, 23:28].copy()
+    tmp[2, 2] = 0
+    target = np.sum(tmp) / 24
+
+    res = tpi(a)
+    print(target - a[25,25])
+    assert np.allclose(res[25, 25], (target - a[25, 25]))
