@@ -3,8 +3,9 @@
 
 import pytest
 import numpy as np
+import xarray as xr
 from textory.util import neighbour_diff_squared, num_neighbours, neighbour_count, create_kernel,\
-convolution
+convolution, xr_wrapper
 
 @pytest.fixture
 def init_np_arrays():
@@ -170,4 +171,53 @@ def test_convolution(init_np_arrays):
     assert res[25,25] == np.sum(a[24:27, 24:27] / 9)
 
 
+def test_xr_wrapper(init_np_arrays):
+    
+    a, b = init_np_arrays
 
+    a = xr.DataArray(a, dims=["x", "y"])
+    a.attrs["name"] = "a"
+    a.attrs["first_attr"] = "test_1"
+    a.attrs["second_attr"] = "test_2"
+    b = xr.DataArray(b, dims=["x", "y"])
+    b.attrs["name"] = "b"
+
+    @xr_wrapper
+    def fun(x, y, win_size, win_geom, lag):
+        return x
+
+    res = fun(a, b, win_size=5, win_geom="square", lag=1)
+
+    assert res.name == "fun_a_b_1_5_square"
+    assert res.attrs["name"] == "fun_a_b"
+    assert res.attrs["window_size"] == 5
+    assert res.attrs["window_geometry"] == "square"
+    assert res.attrs["lag_distance"] == 1
+    assert res.attrs["first_attr"] == "test_1"
+    assert res.attrs["second_attr"] == "test_2"
+
+
+    @xr_wrapper
+    def tpi(x, win_size=5):
+        return x
+
+    res = tpi(a)
+
+    assert res.name == "tpi_a_5"
+    assert res.attrs["name"] == "tpi_a"
+    assert res.attrs["window_size"] == 5
+    assert res.attrs["first_attr"] == "test_1"
+    assert res.attrs["second_attr"] == "test_2"
+
+
+    @xr_wrapper
+    def window_statistic(x, stat="test", win_size=5):
+        return x
+
+    res = window_statistic(a)
+
+    assert res.name == "window_statistic_a_test_5"
+    assert res.attrs["name"] == "window_statistic_a"
+    assert res.attrs["window_size"] == 5
+    assert res.attrs["first_attr"] == "test_1"
+    assert res.attrs["second_attr"] == "test_2"
