@@ -68,6 +68,25 @@ def test_num_neighbours():
     assert num_neighbours(lag=2) == 16
 
 
+def test_neighbour_count():
+    """
+    Currently only test one window size with each elemten in the
+    window contributing.
+
+    Todo
+    ----
+    - test different window sizes
+    - test kernels where not each element is 1 (i.e. with non contributing elements)
+    """
+    shape = (50, 50)
+    kernel = np.ones((5, 5))
+    edge_count_top_left = np.array([[9, 12, 15],
+                                    [12, 16, 20],
+                                    [15, 20, 25]])
+
+    assert np.array_equal(neighbour_count(shape=shape, kernel=kernel)[0:3, 0:3],  edge_count_top_left)
+
+
 def test_create_kernel_squared():
     assert np.allclose(create_kernel(n=5, geom="square"), np.ones((5, 5)))
     assert np.allclose(create_kernel(n=13, geom="square"), np.ones((13, 13)))
