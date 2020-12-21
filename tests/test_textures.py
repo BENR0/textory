@@ -3,6 +3,8 @@
 
 import pytest
 import numpy as np
+import dask.array as da
+import xarray as xr
 import decorator
 from textory.textures import variogram, rodogram, madogram, pseudo_cross_variogram, window_statistic, tpi
 
