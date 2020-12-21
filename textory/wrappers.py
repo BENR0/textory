@@ -52,7 +52,7 @@ def textures_for_scene(scn, textures, append=True):
 
     Parameters
     ----------
-    scn : :class:`satpy.scene.Scene`
+    scn : satpy.scene.Scene
     textures : dict
         Dictionary with textures bands to calulate. The accepted notation is
         {("texture name", lag, win_size, win_geom): [list of dataset names or tuples of dataset names]}
@@ -66,7 +66,7 @@ def textures_for_scene(scn, textures, append=True):
 
     Returns
     -------
-    Scene : :class:`satpy.scene.Scene`
+    `satpy.scene.Scene`
 
     """
     #attributes to strip to satpy scene datasets
@@ -106,9 +106,10 @@ def textures_for_xr_dataset(xrds, textures, append=True):
     Wrapper to calculate multiple textures for dataarrays in a
     :class:`xarray.Dataset`.
 
+
     Parameters
     ----------
-    xrds : :class:`xarray.Dataset`
+    xrds : xarray.Dataset
     textures : dict
         Dictionary with textures bands to calulate. The accepted notation is
         {("texture name", lag, win_size, win_geom): [list of dataset names or tuples of dataset names]}
@@ -120,9 +121,11 @@ def textures_for_xr_dataset(xrds, textures, append=True):
         By default returns a new :class:`xarray.Dataset` with all input datasets and
         all calculated textures.
 
+
     Returns
     -------
-    Dataset : :class:`xarray.Dataset`
+    xarray.Dataset
+        Dataset
 
     """
     out_ds = xrds.copy()
