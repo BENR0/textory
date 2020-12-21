@@ -3,7 +3,8 @@
 
 import pytest
 import numpy as np
-from textory.util import neighbour_diff_squared, num_neighbours, neighbour_count, create_kernel
+from textory.util import neighbour_diff_squared, num_neighbours, neighbour_count, create_kernel,\
+convolution
 
 @pytest.fixture
 def init_np_arrays():
@@ -75,6 +76,7 @@ def test_create_kernel_squared():
 def test_create_kernel_round():
     round_5 = np.array([[0, 1, 1, 1, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [0, 1, 1, 1, 0]])
     assert np.allclose(create_kernel(n=5, geom="round"), round_5)
+
     round_13 = np.array([[0., 0., 0., 0., 1., 1., 1., 1., 1., 0., 0., 0., 0.],
   					     [0., 0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0.],
 					     [0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 0.],
@@ -95,13 +97,30 @@ def test_create_kernel_custom():
     custom = np.array([[1, 0, 0, 0, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 0, 0, 0, 1]])
     assert np.allclose(create_kernel(kernel=custom), custom)
 
-    
+
+def test_create_kernel_even_size():
+    custom = np.array([[1, 0, 0, 0, 1, 0],
+                       [0, 1, 0, 1, 0, 1],
+                       [0, 0, 1, 0, 0, 1],
+                       [0, 1, 0, 1, 0, 0],
+                       [0, 1, 0, 0, 0, 1],
+                       [1, 0, 0, 0, 1, 0]])
+
+    with pytest.raises(ValueError):
+        create_kernel(kernel=custom)
+
+    with pytest.raises(ValueError):
+        create_kernel(kernel=custom[:, 0:-1])
+
+    with pytest.raises(ValueError):
+        create_kernel(n=6)
+
+
 def test_neighbour_diff_squared(init_np_arrays):
     """
     Todo:
         - add case for NaN's in array
     """
-
     a, _ = init_np_arrays
 
     tmp = np.zeros_like(a)
@@ -122,3 +141,14 @@ def test_neighbour_diff_squared(init_np_arrays):
 
     assert np.allclose(neighbour_diff_squared(a, arr2=None, lag=1, func="nd_variogram"), tmp)
     #assert neighbour_diff_squared(a, arr2=None, lag=1, func="nd_variogram")[24, 24] == tmp[24,24]
+
+
+def test_convolution(init_np_arrays):
+    a, _ = init_np_arrays
+
+    custom_kernel = np.ones((3,3))
+    res = convolution(a, kernel=custom_kernel)
+    assert res[25,25] == np.sum(a[24:27, 24:27] / 9)
+
+
+
