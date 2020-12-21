@@ -4,6 +4,9 @@ Textory
 .. image:: https://travis-ci.com/BENR0/textory.svg?branch=master
     :target: https://travis-ci.com/BENR0/textory
 
+.. image:: https://readthedocs.org/projects/textory/badge/
+    :target: https://textory.readthedocs.io/en/latest/
+
 .. image:: https://badge.fury.io/py/textory.svg
     :target: https://badge.fury.io/py/textory
 
