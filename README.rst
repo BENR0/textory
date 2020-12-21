@@ -1,8 +1,8 @@
 Textory
 =======
 
-.. image:: https://travis-ci.org/BENR0/textory.svg?branch=master
-    :target: https://travis-ci.org/BENR0/textory
+.. image:: https://travis-ci.com/BENR0/textory.svg?branch=master
+    :target: https://travis-ci.com/BENR0/textory
 
 .. image:: https://badge.fury.io/py/textory.svg
     :target: https://badge.fury.io/py/textory
