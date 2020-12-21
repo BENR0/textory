@@ -27,7 +27,7 @@ author = 'Benjamin Rösner'
 # built documents.
 #
 # get version using setuptools-scm
-release = get_distribution('satpy').version
+release = get_distribution('textory').version
 # The full version, including alpha/beta/rc tags.
 # for example take major/minor
 version = '.'.join(release.split('.')[:2])
@@ -40,6 +40,10 @@ version = '.'.join(release.split('.')[:2])
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.coverage',
         'sphinx.ext.doctest', 'sphinx.ext.napoleon', 'sphinx.ext.autosummary',
         'sphinx.ext.viewcode']
+
+#napoleon options
+#see https://sphinxcontrib-napoleon.readthedocs.io/en/latest/sphinxcontrib.napoleon.html
+napoleon_use_rtype = False
 
 templates_path = ['_templates']
 
