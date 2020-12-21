@@ -34,6 +34,7 @@ win_size=5, and win_geom="round" between the datasets with name "WV_062" and "IR
                      ("cross_variogram", 1, 5, "round"): [("WV_062", "IR_108")]}
     scn_with_textures = tx.textures_for_scene(scn, textures=textures_dict)
 
+
 Calculate textures for xarray Dataset
 -------------------------------------
 
