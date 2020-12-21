@@ -110,6 +110,10 @@ def test_variogram_default_values_center(init_np_arrays):
     check_pixel_index = 25
     assert variogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
 
+    #dask
+    a = da.from_array(a)
+    assert variogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+
 
 def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
     """Tests the center value of variogram with default parameters."""
@@ -125,6 +129,12 @@ def test_pseudo_cross_variogram_default_values_center(init_np_arrays):
     check_pixel_index = 25
     assert pseudo_cross_variogram(a, b, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
 
+    #dask
+    a = da.from_array(a)
+    b = da.from_array(b)
+    assert pseudo_cross_variogram(a, b, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+
+
 
 def test_madogram_default_values_center(init_np_arrays):
     """Tests the center value of rodogram with default parameters."""
@@ -138,6 +148,10 @@ def test_madogram_default_values_center(init_np_arrays):
     res = vario_func(a, a, win_size=win_size)
 
     check_pixel_index = 25
+    assert np.allclose(madogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
+
+    #dask
+    a = da.from_array(a)
     assert np.allclose(madogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
 
 
@@ -155,6 +169,10 @@ def test_rodogram_default_values_center(init_np_arrays):
     check_pixel_index = 25
     assert rodogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
 
+    #dask
+    a = da.from_array(a)
+    assert rodogram(a, lag=1, win_size=win_size, win_geom="square")[check_pixel_index, check_pixel_index] == res[check_pixel_index, check_pixel_index]
+
 
 def test_window_statistic_std(init_np_arrays):
     """Tests the window statistic for standard deviation."""
@@ -167,6 +185,11 @@ def test_window_statistic_std(init_np_arrays):
                         
     check_pixel_index = 25
     assert np.allclose(window_statistic(a, stat="nanstd", win_size=win_size)[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
+
+    #dask
+    a = da.from_array(a)
+    assert np.allclose(window_statistic(a, stat="nanstd", win_size=win_size)[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
+
 
 
 def test_tpi_default_values_center(init_np_arrays):
