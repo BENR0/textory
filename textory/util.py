@@ -527,6 +527,20 @@ def _win_view_stat(x, win_size=5, stat="nanmean", **kwargs):
 
 @decorator.decorator
 def xr_wrapper(fun, *args, **kwargs):
+    """Decorator to handle :class:`xarray.DataArray` input.
+
+    Applied to functions which take one or two arrays as input
+    the decorator just applies the function in case of numpy array input.
+    In the case of :class:`xarray.DataArray` input the decorator will
+    copy over the attributes of the first input array, change the "name" attribute
+    to the function which was applied concatenated with the supplied parameters to
+    that function and the name of the input.
+
+    Todo
+    ----
+    - handling of attributes of second input (e.g. combine attributes?!)
+    - refactor np.array case which has double code
+    """
     import inspect
 
     run_sig = inspect.getfullargspec(fun)
