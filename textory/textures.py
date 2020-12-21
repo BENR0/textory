@@ -198,7 +198,7 @@ def window_statistic(x, stat="nanmean", win_size=5, **kwargs):
     - make sure that each chunk is multiple of win_size in map_overlap
     """
     if win_size % 2 == 0:
-        raise("Window size must be odd.")
+        raise ValueError("Window size must be odd.")
 
     #create view_as_windows function with reduced parameters for mapping
     pcon = functools.partial(_win_view_stat, win_size=win_size, stat=stat, **kwargs)

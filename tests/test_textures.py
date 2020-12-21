@@ -190,6 +190,10 @@ def test_window_statistic_std(init_np_arrays):
     a = da.from_array(a)
     assert np.allclose(window_statistic(a, stat="nanstd", win_size=win_size)[check_pixel_index, check_pixel_index], res[check_pixel_index, check_pixel_index])
 
+    #test odd window
+    with pytest.raises(ValueError):
+        window_statistic(a, stat="nanstd", win_size=6)
+
 
 
 def test_tpi_default_values_center(init_np_arrays):
