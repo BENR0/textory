@@ -20,9 +20,17 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 # -- Project information -----------------------------------------------------
 
 project = 'Textory'
-copyright = '2019, Benjamin Rösner'
+copyright = '2019-{}, Benjamin Rösner'.format(datetime.utcnow().strftime("%Y"))
 author = 'Benjamin Rösner'
-
+# The version info for the project you're documenting, acts as replacement for
+# |version| and |release|, also used in various other places throughout the
+# built documents.
+#
+# get version using setuptools-scm
+release = get_distribution('satpy').version
+# The full version, including alpha/beta/rc tags.
+# for example take major/minor
+version = '.'.join(release.split('.')[:2])
 
 # -- General configuration ---------------------------------------------------
 
