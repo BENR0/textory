@@ -11,7 +11,7 @@ setuptools.setup(
     url="https://github.com/benr0/textory",
     packages=setuptools.find_packages(),
     #include_package_data  =  True,
-    install_requires=["numpy",
+    install_requires=["numpy>=1.16.5",
                       "xarray",
                       "scipy",
                       "scikit-image",
