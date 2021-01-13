@@ -22,7 +22,6 @@ A clear and concise description of what you expected to happen.
 
 **Actual results**
 Text output of actual results or error messages including full tracebacks if applicable.
-<!-- Use `from satpy.utils import debug_on; debug_on()` to turn on all DEBUG log messages -->
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
