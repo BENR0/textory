@@ -24,6 +24,7 @@ It can also be used conveniently with xarrays and Satpy scenes.
    overview
    usage
    satpy_usage
+   performance
 
 .. toctree::
    :maxdepth: 1
