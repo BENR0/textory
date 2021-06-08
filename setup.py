@@ -20,7 +20,7 @@ setuptools.setup(
     setup_requires=["setuptools_scm"],
     use_scm_version=True,
     python_requires=">=3.7",
-    tests_require=["pytest"],
+    extras_require={"test": ["pytest"]},
     classifiers=["Programming Language :: Python",
                  "Development Status :: 4 - Beta",
                  "Intended Audience :: Science/Research",
