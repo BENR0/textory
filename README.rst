@@ -13,8 +13,8 @@ Textory
 .. image:: https://codecov.io/gh/BENR0/textory/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/BENR0/textory
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3653939.svg
-   :target: https://doi.org/10.5281/zenodo.3653939
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3653938.svg
+   :target: https://doi.org/10.5281/zenodo.3653938
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
