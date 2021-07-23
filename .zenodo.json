@@ -1,0 +1,21 @@
+{
+    "creators": [
+        {   
+            "name": "Rösner, Benjamin",
+            "affiliation": "Laboratory for Climatology and Remote Sensing (LCRS)"
+        },
+        {   
+            "name": "Egli, Sebastian",
+            "affiliation": "Laboratory for Climatology and Remote Sensing (LCRS)"
+        }
+    ],    
+
+    "license": "MIT",
+
+    "title": "Textory: Windowed statistics for arrays.",
+
+    "description": "Textory is a Python package which allows calculation of windowed statistics on array like structures which can be used as image texture features in machine learning applications.",
+
+    "keywords": ["Python", "image textures", "machine learning"]
+}
+
